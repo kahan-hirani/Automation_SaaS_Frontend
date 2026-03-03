@@ -5,20 +5,20 @@ import { X, AlertCircle } from 'lucide-react';
 const CreateAutomationModal = ({ onClose, onCreate }) => {
   const [name, setName] = useState('');
   const [targetUrl, setTargetUrl] = useState('');
-  const [schedule, setSchedule] = useState('1 minute');
+  const [schedule, setSchedule] = useState('*/1 * * * *'); // Default: every 1 minute
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const scheduleOptions = [
-    '1 minute',
-    '5 minutes',
-    '10 minutes',
-    '30 minutes',
-    '1 hour',
-    '2 hours',
-    '6 hours',
-    '12 hours',
-    '1 day',
+    { label: '1 minute', cron: '*/1 * * * *' },
+    { label: '5 minutes', cron: '*/5 * * * *' },
+    { label: '10 minutes', cron: '*/10 * * * *' },
+    { label: '30 minutes', cron: '*/30 * * * *' },
+    { label: '1 hour', cron: '0 */1 * * *' },
+    { label: '2 hours', cron: '0 */2 * * *' },
+    { label: '6 hours', cron: '0 */6 * * *' },
+    { label: '12 hours', cron: '0 */12 * * *' },
+    { label: '1 day', cron: '0 0 * * *' },
   ];
 
   const handleSubmit = async (e) => {
@@ -109,8 +109,8 @@ const CreateAutomationModal = ({ onClose, onCreate }) => {
                 required
               >
                 {scheduleOptions.map((option) => (
-                  <option key={option} value={option}>
-                    Every {option}
+                  <option key={option.cron} value={option.cron}>
+                    Every {option.label}
                   </option>
                 ))}
               </select>

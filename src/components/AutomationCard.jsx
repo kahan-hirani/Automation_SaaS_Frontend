@@ -1,5 +1,21 @@
 import { Globe, Clock, Trash2, Power, PowerOff } from 'lucide-react';
 
+// Convert cron to human-readable format
+const cronToHuman = (cron) => {
+  const cronMap = {
+    '*/1 * * * *': 'minute',
+    '*/5 * * * *': '5 minutes',
+    '*/10 * * * *': '10 minutes',
+    '*/30 * * * *': '30 minutes',
+    '0 */1 * * *': 'hour',
+    '0 */2 * * *': '2 hours',
+    '0 */6 * * *': '6 hours',
+    '0 */12 * * *': '12 hours',
+    '0 0 * * *': 'day',
+  };
+  return cronMap[cron] || cron;
+};
+
 const AutomationCard = ({ automation, onDelete, onToggle }) => {
   return (
     <div className="card hover:shadow-md transition-shadow duration-200 animate-fade-in">
@@ -49,7 +65,7 @@ const AutomationCard = ({ automation, onDelete, onToggle }) => {
         <div className="flex items-center space-x-2">
           <Clock className="h-4 w-4 text-gray-400" />
           <span className="text-sm text-gray-600">
-            Every <span className="font-medium">{automation.schedule}</span>
+            Every <span className="font-medium">{cronToHuman(automation.schedule)}</span>
           </span>
         </div>
 
