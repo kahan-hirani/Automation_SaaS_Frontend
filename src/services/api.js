@@ -24,6 +24,8 @@ export const authAPI = {
   register: (data) => api.post('/auth/users/register', data),
   login: (data) => api.post('/auth/users/login', data),
   getProfile: () => api.get('/auth/users/profile'),
+  updateProfile: (data) => api.put('/auth/users/profile', data),
+  deleteAccount: () => api.delete('/auth/users/profile'),
 };
 
 // Automation APIs

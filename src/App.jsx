@@ -5,6 +5,8 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Logs from './pages/Logs';
 import Metrics from './pages/Metrics';
+import Features from './pages/Features';
+import Profile from './pages/Profile';
 import { Loader } from 'lucide-react';
 
 const ProtectedRoute = ({ children }) => {
@@ -86,6 +88,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <Metrics />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/features"
+            element={
+              <ProtectedRoute>
+                <Features />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
               </ProtectedRoute>
             }
           />

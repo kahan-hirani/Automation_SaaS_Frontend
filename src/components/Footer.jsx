@@ -9,6 +9,8 @@ const footerLinks = [
       { label: 'Automations', to: '/' },
       { label: 'Logs', to: '/logs' },
       { label: 'Metrics', to: '/metrics' },
+      { label: 'Features', to: '/features' },
+      { label: 'Profile', to: '/profile' },
     ],
   },
   {
@@ -127,7 +129,7 @@ const Footer = () => {
           <p className="flex items-center gap-1.5 text-xs text-zinc-600">
             Built with
             <Heart className="h-3 w-3 fill-zinc-600 text-zinc-600" />
-            using Node.js, React &amp; BullMQ
+            By <a href="https://github.com/kahan-hirani" target='_blank' className="text-zinc-500 transition hover:text-white">Kahan Hirani</a>
           </p>
         </div>
       </div>

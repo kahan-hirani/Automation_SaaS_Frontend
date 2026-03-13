@@ -14,6 +14,9 @@ import {
   ChevronRight,
   ChevronsRight,
   RotateCw,
+  Globe,
+  DollarSign,
+  Briefcase,
 } from 'lucide-react';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
@@ -28,10 +31,18 @@ const HEALTH_FILTERS = {
   FAILED: 'failed',
 };
 
+const TYPE_META = {
+  WEBSITE_UPTIME: { label: 'Uptime', Icon: Globe },
+  PRICE_MONITOR:  { label: 'Price',  Icon: DollarSign },
+  JOB_MONITOR:    { label: 'Jobs',   Icon: Briefcase },
+};
+
 const getHealthLevel = (log) => {
-  if (log.status === 'failed') {
-    return HEALTH_FILTERS.FAILED;
-  }
+  if (log.status === 'failed') return HEALTH_FILTERS.FAILED;
+
+  // Non-uptime types: a successful run is always healthy
+  const automationType = log.Automation?.automationType || 'WEBSITE_UPTIME';
+  if (automationType !== 'WEBSITE_UPTIME') return HEALTH_FILTERS.HEALTHY;
 
   const explicitHealth = log.result?.health?.level;
   if (
@@ -46,14 +57,8 @@ const getHealthLevel = (log) => {
   const responseTime = Number(log.result?.responseTime || 0);
   const contentLength = Number(log.result?.contentLength || 0);
 
-  if (httpStatus >= 400 || httpStatus === 0) {
-    return HEALTH_FILTERS.UNHEALTHY;
-  }
-
-  if (responseTime >= 5000 || contentLength <= 0) {
-    return HEALTH_FILTERS.DEGRADED;
-  }
-
+  if (httpStatus >= 400 || httpStatus === 0) return HEALTH_FILTERS.UNHEALTHY;
+  if (responseTime >= 5000 || contentLength <= 0) return HEALTH_FILTERS.DEGRADED;
   return HEALTH_FILTERS.HEALTHY;
 };
 
@@ -69,6 +74,7 @@ const Logs = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
+  const [typeFilter, setTypeFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
   const [pageInput, setPageInput] = useState('1');
@@ -109,8 +115,11 @@ const Logs = () => {
   const failedCount = logsWithHealth.filter((l) => l.healthLevel === HEALTH_FILTERS.FAILED).length;
 
   const filteredLogs = logsWithHealth.filter((log) => {
-    if (filter === HEALTH_FILTERS.ALL) return true;
-    return log.healthLevel === filter;
+    const healthOk = filter === HEALTH_FILTERS.ALL || log.healthLevel === filter;
+    const typeOk =
+      typeFilter === 'all' ||
+      (log.Automation?.automationType || 'WEBSITE_UPTIME') === typeFilter;
+    return healthOk && typeOk;
   });
 
   const totalPages = Math.max(1, Math.ceil(filteredLogs.length / pageSize));
@@ -122,7 +131,7 @@ const Logs = () => {
   useEffect(() => {
     setCurrentPage(1);
     setPageInput('1');
-  }, [filter]);
+  }, [filter, typeFilter]);
 
   useEffect(() => {
     if (currentPage > totalPages) {
@@ -150,6 +159,65 @@ const Logs = () => {
     Math.max(0, safeCurrentPage - 3),
     Math.max(0, safeCurrentPage - 3) + 5
   );
+
+  const renderLogDetails = (log) => {
+    const type = log.Automation?.automationType || 'WEBSITE_UPTIME';
+    const result = log.result || {};
+
+    if (log.status !== 'success') {
+      return (
+        <div className="max-w-xs text-sm leading-6 text-zinc-400">
+          {log.error || 'No error details'}
+        </div>
+      );
+    }
+
+    if (type === 'PRICE_MONITOR') {
+      return (
+        <div className="space-y-1 text-sm leading-6">
+          <div className="font-medium text-white">
+            {result.currentPrice !== undefined ? `Current: $${result.currentPrice}` : 'Price: N/A'}
+          </div>
+          {result.previousPrice !== undefined && (
+            <div className="text-zinc-500">
+              Prev: ${result.previousPrice}
+              {result.priceDropped && (
+                <span className="ml-2 font-semibold text-white">↓ Dropped!</span>
+              )}
+            </div>
+          )}
+          <div className="text-zinc-500">{result.executionTime}ms</div>
+        </div>
+      );
+    }
+
+    if (type === 'JOB_MONITOR') {
+      return (
+        <div className="space-y-1 text-sm leading-6">
+          <div className="font-medium text-white">
+            {result.jobCount !== undefined ? `${result.jobCount} listings found` : 'N/A'}
+          </div>
+          {result.newJobs > 0 && (
+            <div className="text-zinc-300">{result.newJobs} new job(s) detected</div>
+          )}
+          {result.keyword && (
+            <div className="text-zinc-500">Keyword: {result.keyword}</div>
+          )}
+          <div className="text-zinc-500">{result.executionTime}ms</div>
+        </div>
+      );
+    }
+
+    // WEBSITE_UPTIME
+    return (
+      <div className="space-y-1 text-sm leading-6">
+        <div className="font-medium text-white">{result.title || 'No title'}</div>
+        <div className="text-zinc-500">
+          HTTP {result.httpStatus} • {result.executionTime}ms
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="app-shell">
@@ -216,7 +284,7 @@ const Logs = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div className="mb-6 flex flex-wrap gap-2">
+          <div className="mb-3 flex flex-wrap gap-2">
             {[
               { key: HEALTH_FILTERS.ALL, label: `All (${logs.length})` },
               { key: HEALTH_FILTERS.HEALTHY, label: `Healthy (${healthyCount})` },
@@ -234,6 +302,26 @@ const Logs = () => {
                 size="sm"
               >
                 {item.label}
+              </Button>
+            ))}
+          </div>
+
+          {/* Type filter */}
+          <div className="mb-6 flex flex-wrap gap-2">
+            {[
+              { key: 'all',            label: 'All Types', Icon: null },
+              { key: 'WEBSITE_UPTIME', label: 'Uptime',    Icon: Globe },
+              { key: 'PRICE_MONITOR',  label: 'Price',     Icon: DollarSign },
+              { key: 'JOB_MONITOR',    label: 'Jobs',      Icon: Briefcase },
+            ].map(({ key, label, Icon }) => (
+              <Button
+                key={key}
+                onClick={() => { setTypeFilter(key); setCurrentPage(1); }}
+                variant={typeFilter === key ? 'default' : 'secondary'}
+                size="sm"
+              >
+                {Icon && <Icon className="mr-1 h-3.5 w-3.5" />}
+                {label}
               </Button>
             ))}
           </div>
@@ -275,12 +363,27 @@ const Logs = () => {
                         className="border-b border-white/6 transition hover:bg-white/[0.03]"
                       >
                         <td className="px-6 py-5 align-top">
-                          <div className="text-sm font-semibold text-white">
-                            {log.Automation?.name || 'Unknown'}
-                          </div>
-                          <div className="mt-2 max-w-xs text-sm leading-6 text-zinc-500">
-                            {log.Automation?.targetUrl}
-                          </div>
+                          {(() => {
+                            const type = log.Automation?.automationType || 'WEBSITE_UPTIME';
+                            const { label: typeLabel, Icon: TypeIcon } = TYPE_META[type] || TYPE_META.WEBSITE_UPTIME;
+                            const displayUrl = log.Automation?.config?.url || log.Automation?.targetUrl;
+                            return (
+                              <>
+                                <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5">
+                                  <TypeIcon className="h-3 w-3 text-zinc-400" />
+                                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-zinc-400">{typeLabel}</span>
+                                </div>
+                                <div className="text-sm font-semibold text-white">
+                                  {log.Automation?.name || 'Unknown'}
+                                </div>
+                                {displayUrl && (
+                                  <div className="mt-1 max-w-xs truncate text-sm text-zinc-500">
+                                    {displayUrl}
+                                  </div>
+                                )}
+                              </>
+                            );
+                          })()}
                         </td>
                         <td className="px-6 py-5 align-top">
                           <div className="flex flex-wrap items-center gap-2">
@@ -293,18 +396,7 @@ const Logs = () => {
                           </div>
                         </td>
                         <td className="px-6 py-5 align-top">
-                          {log.status === 'success' ? (
-                            <div className="text-sm leading-6 text-zinc-300">
-                              <div className="font-medium text-white">Title: {log.result?.title || 'N/A'}</div>
-                              <div className="text-zinc-500">
-                                HTTP {log.result?.httpStatus} • {log.result?.executionTime}ms
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="max-w-xs text-sm leading-6 text-zinc-400">
-                              {log.error}
-                            </div>
-                          )}
+                          {renderLogDetails(log)}
                         </td>
                         <td className="px-6 py-5 align-top text-sm text-zinc-400">
                           {log.result?.executionTime}ms
