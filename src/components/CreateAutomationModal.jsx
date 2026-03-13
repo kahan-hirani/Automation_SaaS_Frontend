@@ -1,11 +1,23 @@
 import { useState } from 'react';
 import { automationAPI } from '../services/api';
-import { X, AlertCircle } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { AlertCircle, Orbit } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from './ui/dialog';
+import { Button } from './ui/button';
+import { Card, CardContent } from './ui/card';
+import { Input } from './ui/input';
 
 const CreateAutomationModal = ({ onClose, onCreate }) => {
   const [name, setName] = useState('');
   const [targetUrl, setTargetUrl] = useState('');
-  const [schedule, setSchedule] = useState('*/1 * * * *'); // Default: every 1 minute
+  const [schedule, setSchedule] = useState('*/1 * * * *');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -37,108 +49,89 @@ const CreateAutomationModal = ({ onClose, onCreate }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
-      <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
-        {/* Overlay */}
-        <div
-          className="fixed inset-0 transition-opacity bg-gray-900 bg-opacity-75"
-          onClick={onClose}
-        />
+    <Dialog open onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="overflow-hidden">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <div className="pointer-events-none absolute inset-x-10 top-0 h-36 rounded-full bg-white/10 blur-3xl" />
+          <DialogHeader className="relative">
+            <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-3xl border border-white/12 bg-white text-black shadow-[0_12px_32px_rgba(255,255,255,0.12)]">
+              <Orbit className="h-6 w-6" />
+            </div>
+            <DialogTitle>Create New Automation</DialogTitle>
+            <DialogDescription>
+              Configure a target, cadence, and launch a new monitoring workflow.
+            </DialogDescription>
+          </DialogHeader>
 
-        {/* Modal */}
-        <div className="relative inline-block w-full max-w-lg p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-2xl font-bold text-gray-900">
-              Create New Automation
-            </h3>
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              <X className="h-6 w-6" />
-            </button>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="relative mt-8 space-y-5">
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start space-x-2">
-                <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-red-600">{error}</p>
-              </div>
+              <Card className="border-white/12 bg-white/8 p-0">
+                <CardContent className="flex items-start gap-3 p-4 text-sm text-zinc-300">
+                  <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0" />
+                  <p>{error}</p>
+                </CardContent>
+              </Card>
             )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Automation Name <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="input"
-                placeholder="e.g., Check Google Homepage"
-                required
-              />
+            <div className="grid gap-5 sm:grid-cols-2">
+              <div className="space-y-2 sm:col-span-2">
+                <label className="section-kicker block">Automation Name</label>
+                <Input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Check Google Homepage"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2 sm:col-span-2">
+                <label className="section-kicker block">Target URL</label>
+                <Input
+                  type="url"
+                  value={targetUrl}
+                  onChange={(e) => setTargetUrl(e.target.value)}
+                  placeholder="https://example.com"
+                  required
+                />
+                <p className="text-xs uppercase tracking-[0.26em] text-zinc-500">
+                  The page this workflow monitors.
+                </p>
+              </div>
+
+              <div className="space-y-2 sm:col-span-2">
+                <label className="section-kicker block">Schedule</label>
+                <select
+                  value={schedule}
+                  onChange={(e) => setSchedule(e.target.value)}
+                  className="flex h-12 w-full rounded-2xl border border-white/12 bg-black/60 px-4 py-3 text-sm text-white transition duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                  required
+                >
+                  {scheduleOptions.map((option) => (
+                    <option key={option.cron} value={option.cron} className="bg-black text-white">
+                      Every {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Target URL <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="url"
-                value={targetUrl}
-                onChange={(e) => setTargetUrl(e.target.value)}
-                className="input"
-                placeholder="https://example.com"
-                required
-              />
-              <p className="mt-1 text-xs text-gray-500">
-                The webpage you want to automate
-              </p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Schedule <span className="text-red-500">*</span>
-              </label>
-              <select
-                value={schedule}
-                onChange={(e) => setSchedule(e.target.value)}
-                className="input"
-                required
-              >
-                {scheduleOptions.map((option) => (
-                  <option key={option.cron} value={option.cron}>
-                    Every {option.label}
-                  </option>
-                ))}
-              </select>
-              <p className="mt-1 text-xs text-gray-500">
-                How often to run this automation
-              </p>
-            </div>
-
-            <div className="flex space-x-3 pt-4">
-              <button
-                type="button"
-                onClick={onClose}
-                className="flex-1 btn-secondary"
-              >
+            <DialogFooter className="pt-4">
+              <Button type="button" variant="secondary" onClick={onClose}>
                 Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={loading}
-                className="flex-1 btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
-              >
+              </Button>
+              <Button type="submit" disabled={loading}>
                 {loading ? 'Creating...' : 'Create Automation'}
-              </button>
-            </div>
+              </Button>
+            </DialogFooter>
           </form>
-        </div>
-      </div>
-    </div>
+        </motion.div>
+      </DialogContent>
+    </Dialog>
   );
 };
 

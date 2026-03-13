@@ -1,9 +1,14 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import AutomationCard from '../components/AutomationCard';
 import CreateAutomationModal from '../components/CreateAutomationModal';
 import { automationAPI } from '../services/api';
-import { Plus, Bot, Loader } from 'lucide-react';
+import { Plus, Bot, Loader, Orbit, Activity, Radar, ArrowRight } from 'lucide-react';
+import Footer from '../components/Footer';
+import { Button } from '../components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+import { Badge } from '../components/ui/badge';
 
 const Dashboard = () => {
   const [automations, setAutomations] = useState([]);
@@ -51,58 +56,112 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="app-shell">
+      <div className="noise-overlay" />
       <Navbar />
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">My Automations</h1>
-            <p className="mt-1 text-sm text-gray-600">
-              Create and manage your automation workflows
-            </p>
-          </div>
-          <button
-            onClick={() => setShowModal(true)}
-            className="btn-primary flex items-center space-x-2"
-          >
-            <Plus className="h-5 w-5" />
-            <span>Create Automation</span>
-          </button>
-        </div>
 
-        {/* Automations Grid */}
-        {loading ? (
-          <div className="flex items-center justify-center h-64">
-            <Loader className="h-8 w-8 text-primary-600 animate-spin" />
+      <main className="page-frame">
+        <motion.section
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="relative overflow-hidden rounded-[36px] border border-white/10 bg-black px-6 py-8 shadow-[0_40px_120px_rgba(0,0,0,0.5)] sm:px-8 lg:px-10"
+        >
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-1/2 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.14),transparent_48%)] opacity-80 blur-2xl" />
+          <div className="relative grid gap-8 lg:grid-cols-[1.25fr_0.75fr] lg:items-end">
+            <div>
+              <p className="section-kicker">Automation Studio</p>
+              <h1 className="mt-4 max-w-3xl font-display text-5xl leading-[0.94] tracking-[0.05em] text-white sm:text-6xl">
+                Build a quieter, faster automation command center.
+              </h1>
+              <p className="mt-6 max-w-2xl text-base leading-7 text-zinc-400">
+                Your workflows, schedules, and target surfaces now sit inside a fully monochrome control room with sharper hierarchy and motion-led feedback.
+              </p>
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                <Button
+                  onClick={() => setShowModal(true)}
+                  className="min-w-[220px]"
+                >
+                  <Plus className="h-4 w-4" />
+                  Create Automation
+                </Button>
+                <Badge variant="outline">{automations.length} total workflows</Badge>
+              </div>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
+              {[
+                { icon: Orbit, label: 'Active surface', value: `${automations.filter((item) => item.isActive).length}` },
+                { icon: Radar, label: 'Inactive nodes', value: `${automations.filter((item) => !item.isActive).length}` },
+                { icon: Activity, label: 'System mode', value: 'Live' },
+              ].map(({ icon: Icon, label, value }, index) => (
+                <motion.div
+                  key={label}
+                  initial={{ opacity: 0, y: 24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.45, delay: 0.1 + index * 0.06, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <Card className="bg-white/[0.03] p-5">
+                    <CardContent className="flex items-center justify-between p-0">
+                      <div>
+                        <p className="section-kicker">{label}</p>
+                        <p className="mt-3 font-display text-4xl text-white">{value}</p>
+                      </div>
+                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/6">
+                        <Icon className="h-5 w-5 text-zinc-200" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
           </div>
-        ) : automations.length === 0 ? (
-          <div className="text-center py-12 card">
-            <Bot className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No automations yet</h3>
-            <p className="text-gray-600 mb-6">Create your first automation to get started</p>
-            <button
-              onClick={() => setShowModal(true)}
-              className="btn-primary inline-flex items-center space-x-2"
-            >
-              <Plus className="h-5 w-5" />
-              <span>Create Automation</span>
-            </button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {automations.map((automation) => (
-              <AutomationCard
-                key={automation.id}
-                automation={automation}
-                onDelete={handleDelete}
-                onToggle={handleToggle}
-              />
-            ))}
-          </div>
-        )}
-      </div>
+        </motion.section>
+
+        <motion.section
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-8"
+        >
+          {loading ? (
+            <div className="glass-panel flex h-64 items-center justify-center gap-3 text-sm uppercase tracking-[0.3em] text-zinc-400">
+              <Loader className="h-4 w-4 animate-spin" />
+              Loading automations
+            </div>
+          ) : automations.length === 0 ? (
+            <Card className="mesh-panel overflow-hidden px-6 py-10 sm:px-10 sm:py-12">
+              <CardHeader className="items-center text-center">
+                <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full border border-white/10 bg-white text-black">
+                  <Bot className="h-10 w-10" />
+                </div>
+                <p className="section-kicker">No automations yet</p>
+                <CardTitle className="text-center">Start with your first workflow</CardTitle>
+                <CardDescription className="max-w-xl text-center">
+                  Create a scheduled automation and the dashboard will start filling with live nodes, logs, and system metrics.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="mt-6 flex justify-center">
+                <Button onClick={() => setShowModal(true)}>
+                  <ArrowRight className="h-4 w-4" />
+                  Launch Builder
+                </Button>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+              {automations.map((automation) => (
+                <AutomationCard
+                  key={automation.id}
+                  automation={automation}
+                  onDelete={handleDelete}
+                  onToggle={handleToggle}
+                />
+              ))}
+            </div>
+          )}
+        </motion.section>
+      </main>
 
       {showModal && (
         <CreateAutomationModal
@@ -110,6 +169,8 @@ const Dashboard = () => {
           onCreate={handleCreate}
         />
       )}
+
+      <Footer />
     </div>
   );
 };

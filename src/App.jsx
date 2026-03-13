@@ -7,14 +7,17 @@ import Logs from './pages/Logs';
 import Metrics from './pages/Metrics';
 import { Loader } from 'lucide-react';
 
-// Protected Route Component
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader className="h-8 w-8 text-primary-600 animate-spin" />
+      <div className="app-shell flex min-h-screen items-center justify-center bg-black">
+        <div className="noise-overlay" />
+        <div className="glass-panel flex items-center gap-3 px-6 py-4 text-sm uppercase tracking-[0.3em] text-zinc-300">
+          <Loader className="h-4 w-4 animate-spin" />
+          Loading workspace
+        </div>
       </div>
     );
   }
@@ -22,14 +25,17 @@ const ProtectedRoute = ({ children }) => {
   return user ? children : <Navigate to="/login" />;
 };
 
-// Public Route Component (redirect to dashboard if logged in)
 const PublicRoute = ({ children }) => {
   const { user, loading } = useAuth();
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader className="h-8 w-8 text-primary-600 animate-spin" />
+      <div className="app-shell flex min-h-screen items-center justify-center bg-black">
+        <div className="noise-overlay" />
+        <div className="glass-panel flex items-center gap-3 px-6 py-4 text-sm uppercase tracking-[0.3em] text-zinc-300">
+          <Loader className="h-4 w-4 animate-spin" />
+          Loading workspace
+        </div>
       </div>
     );
   }
@@ -42,7 +48,6 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          {/* Public Routes */}
           <Route
             path="/login"
             element={
@@ -60,7 +65,6 @@ function App() {
             }
           />
 
-          {/* Protected Routes */}
           <Route
             path="/"
             element={
@@ -86,7 +90,6 @@ function App() {
             }
           />
 
-          {/* Catch all */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </AuthProvider>

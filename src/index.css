@@ -1,43 +1,110 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  * {
+    @apply border-zinc-800;
+  }
+
+  html {
+    @apply bg-black;
+  }
+
   body {
-    @apply bg-gray-50 text-gray-900;
+    @apply min-h-screen bg-black font-sans text-white antialiased;
+    background-image:
+      radial-gradient(circle at top left, rgba(255,255,255,0.12), transparent 28%),
+      radial-gradient(circle at top right, rgba(255,255,255,0.08), transparent 24%),
+      linear-gradient(180deg, rgba(255,255,255,0.05), transparent 22%),
+      linear-gradient(135deg, rgba(255,255,255,0.02), transparent 30%);
+    background-attachment: fixed;
+  }
+
+  a {
+    @apply text-inherit;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    @apply font-sans;
+  }
+
+  #root {
+    @apply min-h-screen;
+  }
+
+  ::selection {
+    @apply bg-white text-black;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.28);
   }
 }
 
 @layer components {
-  .btn-primary {
-    @apply px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 font-medium;
+  .app-shell {
+    @apply relative min-h-screen overflow-hidden;
   }
-  
-  .btn-secondary {
-    @apply px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors duration-200 font-medium;
+
+  .noise-overlay {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.08) 0.7px, transparent 0.7px);
+    background-size: 18px 18px;
+    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.4), transparent 88%);
+    opacity: 0.18;
+    pointer-events: none;
   }
-  
-  .card {
-    @apply bg-white rounded-xl shadow-sm border border-gray-200 p-6;
+
+  .mesh-panel {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+    background-size: 44px 44px;
+    background-position: -1px -1px;
   }
-  
-  .input {
-    @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+
+  .glass-panel {
+    @apply rounded-[32px] border border-white/10 bg-white/5 shadow-[0_30px_80px_rgba(0,0,0,0.45)] backdrop-blur-2xl;
   }
-  
-  .badge {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+
+  .page-frame {
+    @apply relative mx-auto w-full max-w-7xl px-4 pb-10 pt-6 sm:px-6 lg:px-8 lg:pb-14 lg:pt-8;
   }
-  
-  .badge-success {
-    @apply bg-green-100 text-green-800;
+
+  .section-kicker {
+    @apply text-[10px] font-semibold uppercase tracking-[0.4em] text-zinc-500;
   }
-  
-  .badge-error {
-    @apply bg-red-100 text-red-800;
+
+  .metric-value {
+    @apply font-display text-5xl leading-none tracking-[0.04em] text-white;
   }
-  
-  .badge-pending {
-    @apply bg-yellow-100 text-yellow-800;
+
+  .hairline {
+    @apply h-px w-full bg-gradient-to-r from-transparent via-white/20 to-transparent;
   }
 }

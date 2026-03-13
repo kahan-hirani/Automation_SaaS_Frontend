@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import { metricsAPI } from '../services/api';
-import { Activity, TrendingUp, Clock, CheckCircle, XCircle, Loader } from 'lucide-react';
+import { Activity, TrendingUp, Clock3, CheckCircle2, XCircle, Loader, Radar, TimerReset } from 'lucide-react';
+import { Card, CardContent } from '../components/ui/card';
 
 const Metrics = () => {
   const [metrics, setMetrics] = useState(null);
@@ -27,157 +30,157 @@ const Metrics = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="app-shell">
+        <div className="noise-overlay" />
         <Navbar />
-        <div className="flex items-center justify-center h-screen">
-          <Loader className="h-8 w-8 text-primary-600 animate-spin" />
-        </div>
+        <main className="page-frame">
+          <div className="glass-panel flex h-[60vh] items-center justify-center gap-3 text-sm uppercase tracking-[0.3em] text-zinc-400">
+            <Loader className="h-4 w-4 animate-spin" />
+            Loading metrics
+          </div>
+        </main>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="app-shell">
+      <div className="noise-overlay" />
       <Navbar />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">System Metrics</h1>
-          <p className="mt-1 text-sm text-gray-600">
-            Real-time monitoring of your automation system
-          </p>
-        </div>
-
-        {/* Queue Status */}
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Queue Status</h2>
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-            <div className="card">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Waiting</p>
-                  <p className="text-3xl font-bold text-yellow-600 mt-1">
-                    {metrics?.queue?.waiting || 0}
-                  </p>
-                </div>
-                <Clock className="h-10 w-10 text-yellow-400" />
-              </div>
+      <main className="page-frame">
+        <motion.section
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="mb-8"
+        >
+          <p className="section-kicker">Realtime Monitoring</p>
+          <div className="mt-4 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <h1 className="font-display text-5xl leading-none tracking-[0.05em] text-white sm:text-6xl">
+                Metrics
+              </h1>
+              <p className="mt-4 max-w-2xl text-base leading-7 text-zinc-400">
+                Queue health and execution performance, reduced to a clearer grayscale dashboard with continuous updates.
+              </p>
             </div>
-
-            <div className="card">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Active</p>
-                  <p className="text-3xl font-bold text-blue-600 mt-1">
-                    {metrics?.queue?.active || 0}
-                  </p>
-                </div>
-                <Activity className="h-10 w-10 text-blue-400 animate-pulse" />
-              </div>
-            </div>
-
-            <div className="card">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Completed</p>
-                  <p className="text-3xl font-bold text-green-600 mt-1">
-                    {metrics?.queue?.completed || 0}
-                  </p>
-                </div>
-                <CheckCircle className="h-10 w-10 text-green-400" />
-              </div>
-            </div>
-
-            <div className="card">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Failed</p>
-                  <p className="text-3xl font-bold text-red-600 mt-1">
-                    {metrics?.queue?.failed || 0}
-                  </p>
-                </div>
-                <XCircle className="h-10 w-10 text-red-400" />
-              </div>
-            </div>
-
-            <div className="card">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Delayed</p>
-                  <p className="text-3xl font-bold text-purple-600 mt-1">
-                    {metrics?.queue?.delayed || 0}
-                  </p>
-                </div>
-                <TrendingUp className="h-10 w-10 text-purple-400" />
-              </div>
+            <div className="glass-panel px-5 py-4 text-xs uppercase tracking-[0.3em] text-zinc-400">
+              Auto-refresh every 30 seconds
             </div>
           </div>
-        </div>
+        </motion.section>
 
-        {/* Execution Statistics */}
-        <div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Execution Statistics (Last Hour)
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="card">
-              <p className="text-sm text-gray-600 mb-2">Total Executions</p>
-              <p className="text-3xl font-bold text-gray-900">
-                {metrics?.executions?.total || 0}
-              </p>
-            </div>
+        <motion.section
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+          className="mb-8"
+        >
+          <div className="mb-4 flex items-center gap-3">
+            <Radar className="h-5 w-5 text-zinc-300" />
+            <h2 className="text-lg font-semibold uppercase tracking-[0.26em] text-zinc-300">Queue Status</h2>
+          </div>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5">
+            {[
+              { label: 'Waiting', value: metrics?.queue?.waiting || 0, icon: Clock3 },
+              { label: 'Active', value: metrics?.queue?.active || 0, icon: Activity },
+              { label: 'Completed', value: metrics?.queue?.completed || 0, icon: CheckCircle2 },
+              { label: 'Failed', value: metrics?.queue?.failed || 0, icon: XCircle },
+              { label: 'Delayed', value: metrics?.queue?.delayed || 0, icon: TrendingUp },
+            ].map(({ label, value, icon: Icon }, index) => (
+              <motion.div
+                key={label}
+                initial={{ opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.12 + index * 0.05, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <Card>
+                  <CardContent className="flex items-center justify-between p-0">
+                    <div>
+                      <p className="section-kicker">{label}</p>
+                      <p className="mt-3 font-display text-4xl text-white">{value}</p>
+                    </div>
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/6">
+                      <Icon className="h-5 w-5 text-zinc-200" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </motion.section>
 
-            <div className="card">
-              <p className="text-sm text-gray-600 mb-2">Successful</p>
-              <p className="text-3xl font-bold text-green-600">
-                {metrics?.executions?.success || 0}
-              </p>
-              <p className="text-sm text-gray-500 mt-1">
-                {metrics?.executions?.successRate}
-              </p>
-            </div>
-
-            <div className="card">
-              <p className="text-sm text-gray-600 mb-2">Failed</p>
-              <p className="text-3xl font-bold text-red-600">
-                {metrics?.executions?.failed || 0}
-              </p>
-            </div>
-
-            <div className="card">
-              <p className="text-sm text-gray-600 mb-2">Avg Execution Time</p>
-              <p className="text-3xl font-bold text-blue-600">
-                {Math.round(metrics?.executions?.avgExecutionTime || 0)}
-                <span className="text-lg text-gray-500">ms</span>
-              </p>
-            </div>
+        <motion.section
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, delay: 0.14, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <div className="mb-4 flex items-center gap-3">
+            <TimerReset className="h-5 w-5 text-zinc-300" />
+            <h2 className="text-lg font-semibold uppercase tracking-[0.26em] text-zinc-300">
+              Execution Statistics
+            </h2>
           </div>
 
-          {/* Min/Max Execution Time */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-            <div className="card">
-              <p className="text-sm text-gray-600 mb-2">Fastest Execution</p>
-              <p className="text-2xl font-bold text-green-600">
-                {metrics?.executions?.minExecutionTime || 0}ms
-              </p>
-            </div>
-
-            <div className="card">
-              <p className="text-sm text-gray-600 mb-2">Slowest Execution</p>
-              <p className="text-2xl font-bold text-orange-600">
-                {metrics?.executions?.maxExecutionTime || 0}ms
-              </p>
-            </div>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {[
+              { label: 'Total Executions', value: metrics?.executions?.total || 0, suffix: '' },
+              { label: 'Successful', value: metrics?.executions?.success || 0, suffix: metrics?.executions?.successRate || '' },
+              { label: 'Failed', value: metrics?.executions?.failed || 0, suffix: '' },
+              {
+                label: 'Avg Execution Time',
+                value: Math.round(metrics?.executions?.avgExecutionTime || 0),
+                suffix: 'ms',
+              },
+            ].map(({ label, value, suffix }, index) => (
+              <motion.div
+                key={label}
+                initial={{ opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.18 + index * 0.05, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <Card>
+                  <CardContent className="p-0">
+                    <p className="section-kicker">{label}</p>
+                    <p className="mt-4 font-display text-5xl text-white">
+                      {value}
+                      {suffix === 'ms' ? <span className="ml-1 text-2xl text-zinc-500">ms</span> : null}
+                    </p>
+                    {suffix && suffix !== 'ms' ? (
+                      <p className="mt-3 text-sm text-zinc-500">{suffix}</p>
+                    ) : null}
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
           </div>
-        </div>
 
-        {/* Auto-refresh indicator */}
-        <div className="mt-8 text-center">
-          <p className="text-sm text-gray-500">
-            Metrics auto-refresh every 30 seconds
-          </p>
-        </div>
-      </div>
+          <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+            <Card>
+              <CardContent className="p-0">
+                <p className="section-kicker">Fastest Execution</p>
+                <p className="mt-4 font-display text-4xl text-white">
+                  {metrics?.executions?.minExecutionTime || 0}
+                  <span className="ml-1 text-xl text-zinc-500">ms</span>
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-0">
+                <p className="section-kicker">Slowest Execution</p>
+                <p className="mt-4 font-display text-4xl text-white">
+                  {metrics?.executions?.maxExecutionTime || 0}
+                  <span className="ml-1 text-xl text-zinc-500">ms</span>
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </motion.section>
+      </main>
+
+      <Footer />
     </div>
   );
 };

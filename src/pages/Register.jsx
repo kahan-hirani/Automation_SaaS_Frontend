@@ -1,7 +1,12 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Bot, Mail, Lock, AlertCircle } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Bot, Mail, Lock, AlertCircle, UserPlus } from 'lucide-react';
+import Footer from '../components/Footer';
+import { Button } from '../components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+import { Input } from '../components/ui/input';
 
 const Register = () => {
   const [email, setEmail] = useState('');
@@ -39,97 +44,159 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-primary-100 px-4">
-      <div className="max-w-md w-full">
-        <div className="text-center mb-8 animate-fade-in">
-          <div className="flex justify-center mb-4">
-            <div className="p-3 bg-primary-600 rounded-2xl shadow-lg">
-              <Bot className="h-12 w-12 text-white" />
-            </div>
-          </div>
-          <h2 className="text-3xl font-bold text-gray-900">Create Account</h2>
-          <p className="mt-2 text-gray-600">Start automating your workflows today</p>
-        </div>
+    <div className="app-shell flex min-h-screen flex-col overflow-hidden">
+      <div className="noise-overlay" />
 
-        <div className="card animate-slide-up">
-          <form onSubmit={handleSubmit} className="space-y-5">
+      <div className="relative flex flex-1 items-center justify-center overflow-hidden px-4 py-10">
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+        className="pointer-events-none absolute inset-0"
+      >
+        <motion.div
+          animate={{ x: [0, 28, -14, 0], y: [0, -18, 14, 0] }}
+          transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute left-[12%] top-[10%] h-80 w-80 rounded-full bg-white/8 blur-3xl"
+        />
+        <motion.div
+          animate={{ x: [0, -22, 16, 0], y: [0, 18, -16, 0] }}
+          transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute bottom-[10%] right-[8%] h-[26rem] w-[26rem] rounded-full bg-white/5 blur-3xl"
+        />
+      </motion.div>
+
+      <div className="relative grid w-full max-w-6xl overflow-hidden rounded-[40px] border border-white/10 bg-black/70 shadow-[0_50px_140px_rgba(0,0,0,0.65)] backdrop-blur-2xl lg:grid-cols-[0.95fr_1.05fr]">
+        <motion.section
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          className="flex items-center border-b border-white/10 p-6 sm:p-10 lg:border-b-0 lg:border-r"
+        >
+          <Card className="w-full border-white/10 bg-white/[0.03] p-0">
+            <CardHeader className="p-8 pb-2">
+              <p className="section-kicker">Create Access</p>
+              <CardTitle>Register</CardTitle>
+              <CardDescription>
+                Set up a new workspace account and start orchestrating automations immediately.
+              </CardDescription>
+            </CardHeader>
+
+            <CardContent className="p-8 pt-6">
+              <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start space-x-2">
-                <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-red-600">{error}</p>
+              <div className="rounded-3xl border border-white/12 bg-white/7 p-4 text-sm text-zinc-300">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0" />
+                  <p>{error}</p>
+                </div>
               </div>
             )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email Address
-              </label>
+            <div className="space-y-2">
+              <label className="section-kicker block">Email Address</label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <input
+                <Mail className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+                <Input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="input pl-10"
+                  className="pl-11"
                   placeholder="you@example.com"
                   required
                 />
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Password
-              </label>
+            <div className="space-y-2">
+              <label className="section-kicker block">Password</label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <input
+                <Lock className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+                <Input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="input pl-10"
+                  className="pl-11"
                   placeholder="••••••••"
                   required
                 />
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Confirm Password
-              </label>
+            <div className="space-y-2">
+              <label className="section-kicker block">Confirm Password</label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <input
+                <Lock className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+                <Input
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="input pl-10"
+                  className="pl-11"
                   placeholder="••••••••"
                   required
                 />
               </div>
             </div>
 
-            <button
+            <Button
               type="submit"
               disabled={loading}
-              className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full"
             >
+              <UserPlus className="h-4 w-4" />
               {loading ? 'Creating account...' : 'Create Account'}
-            </button>
+            </Button>
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
-              Already have an account?{' '}
-              <Link to="/login" className="font-medium text-primary-600 hover:text-primary-700">
+              <p className="mt-6 text-sm text-zinc-400">
+                Already have an account?{' '}
+                <Link to="/login" className="font-semibold text-white transition hover:text-zinc-300">
                 Sign in
               </Link>
+              </p>
+            </CardContent>
+          </Card>
+        </motion.section>
+
+        <motion.section
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.55, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+          className="mesh-panel relative flex min-h-[320px] flex-col justify-between p-8 sm:p-10"
+        >
+          <div>
+            <div className="mb-10 flex h-16 w-16 items-center justify-center rounded-[26px] border border-white/10 bg-white text-black">
+              <Bot className="h-8 w-8" />
+            </div>
+            <p className="section-kicker">Build Your Stack</p>
+            <h1 className="mt-4 max-w-lg font-display text-5xl leading-[0.95] tracking-[0.05em] text-white sm:text-6xl">
+              Start with a sharper control room.
+            </h1>
+            <p className="mt-6 max-w-md text-base leading-7 text-zinc-400">
+              New accounts land directly in a redesigned environment built for contrast, clarity, and faster scanning.
             </p>
           </div>
-        </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            {[
+              ['Structured', 'shadcn-style components'],
+              ['Animated', 'motion-led page transitions'],
+              ['Responsive', 'mobile and desktop layouts'],
+              ['Monochrome', 'strict grayscale surfaces'],
+            ].map(([title, subtitle]) => (
+              <div key={title} className="rounded-3xl border border-white/8 bg-white/5 p-5">
+                <p className="text-lg font-semibold text-white">{title}</p>
+                <p className="mt-2 text-sm leading-6 text-zinc-400">{subtitle}</p>
+              </div>
+            ))}
+          </div>
+        </motion.section>
       </div>
+
+      </div>
+
+      <Footer />
     </div>
   );
 };
