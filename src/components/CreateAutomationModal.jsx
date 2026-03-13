@@ -14,7 +14,7 @@ import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import { Input } from './ui/input';
 
-const CreateAutomationModal = ({ onClose, onCreate }) => {
+const CreateAutomationModal = ({ onClose, onCreate, onCreateFailed }) => {
   const [name, setName] = useState('');
   const [targetUrl, setTargetUrl] = useState('');
   const [schedule, setSchedule] = useState('*/1 * * * *');
@@ -43,6 +43,7 @@ const CreateAutomationModal = ({ onClose, onCreate }) => {
       onCreate();
     } catch (err) {
       setError(err.response?.data?.errMessage || 'Failed to create automation');
+      onCreateFailed?.();
     } finally {
       setLoading(false);
     }

@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import AutomationCard from '../components/AutomationCard';
 import CreateAutomationModal from '../components/CreateAutomationModal';
+import ConfirmActionModal from '../components/ConfirmActionModal';
+import ToastStack from '../components/ToastStack';
 import { automationAPI } from '../services/api';
 import { Plus, Bot, Loader, Orbit, Activity, Radar, ArrowRight } from 'lucide-react';
 import Footer from '../components/Footer';
@@ -14,6 +16,9 @@ const Dashboard = () => {
   const [automations, setAutomations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [toasts, setToasts] = useState([]);
+  const [pendingAction, setPendingAction] = useState(null);
+  const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
     fetchAutomations();
@@ -30,28 +35,93 @@ const Dashboard = () => {
     }
   };
 
+  const notify = (type, message) => {
+    const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    setToasts((current) => [...current, { id, type, message }]);
+
+    window.setTimeout(() => {
+      setToasts((current) => current.filter((toast) => toast.id !== id));
+    }, 3500);
+  };
+
+  const dismissToast = (id) => {
+    setToasts((current) => current.filter((toast) => toast.id !== id));
+  };
+
   const handleCreate = () => {
     setShowModal(false);
+    notify('success', 'Automation created successfully.');
     fetchAutomations();
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this automation?')) {
-      try {
-        await automationAPI.delete(id);
-        fetchAutomations();
-      } catch (error) {
-        alert('Failed to delete automation');
-      }
+  const handleCreateFailure = () => {
+    notify('error', 'Could not create automation. Please check input and try again.');
+  };
+
+  const handleDelete = (automation) => {
+    setPendingAction({
+      type: 'delete',
+      automation,
+      title: 'Delete automation?',
+      description: `This will permanently remove ${automation.name}. This action cannot be undone.`,
+      confirmLabel: 'Delete',
+    });
+  };
+
+  const handleToggle = (automation) => {
+    if (automation.isActive) {
+      setPendingAction({
+        type: 'pause',
+        automation,
+        title: 'Pause automation?',
+        description: `${automation.name} will stop running on schedule until you activate it again.`,
+        confirmLabel: 'Pause',
+      });
+      return;
+    }
+
+    // Activating is non-destructive, so we execute immediately.
+    executeToggle(automation);
+  };
+
+  const executeToggle = async (automation) => {
+    try {
+      await automationAPI.toggle(automation.id);
+      await fetchAutomations();
+      notify(
+        'success',
+        automation.isActive
+          ? `${automation.name} paused successfully.`
+          : `${automation.name} activated successfully.`
+      );
+    } catch (error) {
+      notify('error', `Failed to update ${automation.name}. Please try again.`);
     }
   };
 
-  const handleToggle = async (id) => {
+  const handleConfirmAction = async () => {
+    if (!pendingAction?.automation) return;
+
+    setActionLoading(true);
+    const { type, automation } = pendingAction;
+
     try {
-      await automationAPI.toggle(id);
-      fetchAutomations();
+      if (type === 'delete') {
+        await automationAPI.delete(automation.id);
+        await fetchAutomations();
+        notify('success', `${automation.name} was deleted.`);
+      }
+
+      if (type === 'pause') {
+        await automationAPI.toggle(automation.id);
+        await fetchAutomations();
+        notify('success', `${automation.name} paused successfully.`);
+      }
     } catch (error) {
-      alert('Failed to toggle automation');
+      notify('error', `Action failed for ${automation.name}. Please try again.`);
+    } finally {
+      setActionLoading(false);
+      setPendingAction(null);
     }
   };
 
@@ -167,8 +237,21 @@ const Dashboard = () => {
         <CreateAutomationModal
           onClose={() => setShowModal(false)}
           onCreate={handleCreate}
+          onCreateFailed={handleCreateFailure}
         />
       )}
+
+      <ConfirmActionModal
+        open={Boolean(pendingAction)}
+        title={pendingAction?.title || 'Are you sure?'}
+        description={pendingAction?.description || ''}
+        confirmLabel={pendingAction?.confirmLabel || 'Confirm'}
+        loading={actionLoading}
+        onCancel={() => setPendingAction(null)}
+        onConfirm={handleConfirmAction}
+      />
+
+      <ToastStack toasts={toasts} onDismiss={dismissToast} />
 
       <Footer />
     </div>

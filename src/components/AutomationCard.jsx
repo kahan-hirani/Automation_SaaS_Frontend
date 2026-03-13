@@ -37,7 +37,7 @@ const AutomationCard = ({ automation, onDelete, onToggle }) => {
         </div>
         <div className="flex items-center gap-2">
           <Button
-            onClick={() => onToggle(automation.id)}
+            onClick={() => onToggle(automation)}
             variant={automation.isActive ? 'default' : 'secondary'}
             size="icon"
             title={automation.isActive ? 'Deactivate' : 'Activate'}
@@ -49,7 +49,7 @@ const AutomationCard = ({ automation, onDelete, onToggle }) => {
             )}
           </Button>
           <Button
-            onClick={() => onDelete(automation.id)}
+            onClick={() => onDelete(automation)}
             variant="ghost"
             size="icon"
             title="Delete"
