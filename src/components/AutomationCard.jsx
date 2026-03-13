@@ -39,7 +39,7 @@ const shortenUrl = (url, maxLength = 56) => {
   }
 };
 
-const AutomationCard = ({ automation, onDelete, onToggle }) => {
+const AutomationCard = ({ automation, onDelete, onToggle, onOpen }) => {
   const meta = TYPE_META[automation.automationType] || TYPE_META.WEBSITE_UPTIME;
   const TypeIcon = meta.Icon;
   // Resolve display URL: prefer config.url, fallback to targetUrl (legacy)
@@ -51,7 +51,8 @@ const AutomationCard = ({ automation, onDelete, onToggle }) => {
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-      className="glass-panel group relative overflow-hidden p-4"
+      onClick={() => onOpen && onOpen(automation)}
+      className="glass-panel group relative cursor-pointer overflow-hidden p-4"
     >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.14),transparent_28%)] opacity-0 transition duration-500 group-hover:opacity-100" />
       <div className="relative flex items-start justify-between gap-3">
@@ -68,7 +69,10 @@ const AutomationCard = ({ automation, onDelete, onToggle }) => {
         </div>
         <div className="flex items-center gap-2">
           <Button
-            onClick={() => onToggle(automation)}
+            onClick={(event) => {
+              event.stopPropagation();
+              onToggle(automation);
+            }}
             variant={automation.isActive ? 'default' : 'secondary'}
             size="icon"
             title={automation.isActive ? 'Deactivate' : 'Activate'}
@@ -80,7 +84,10 @@ const AutomationCard = ({ automation, onDelete, onToggle }) => {
             )}
           </Button>
           <Button
-            onClick={() => onDelete(automation)}
+            onClick={(event) => {
+              event.stopPropagation();
+              onDelete(automation);
+            }}
             variant="ghost"
             size="icon"
             title="Delete"

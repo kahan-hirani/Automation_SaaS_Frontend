@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { metricsAPI } from '../services/api';
-import { Activity, TrendingUp, Clock3, CheckCircle2, XCircle, Loader, Radar, TimerReset } from 'lucide-react';
+import { Clock3, CheckCircle2, XCircle, Loader, Activity, TimerReset } from 'lucide-react';
 import { Card, CardContent } from '../components/ui/card';
 
 const Metrics = () => {
@@ -43,6 +43,17 @@ const Metrics = () => {
     );
   }
 
+  const queue = metrics?.queue || {};
+  const executions = metrics?.executions || {};
+
+  const totalRuns = executions.total || 0;
+  const successfulRuns = executions.success || 0;
+  const failedRuns = executions.failed || 0;
+  const successRate = executions.successRate || '0%';
+  const avgExecutionTime = Math.round(executions.avgExecutionTime || 0);
+  const pendingTasks = (queue.waiting || 0) + (queue.delayed || 0);
+  const runningTasks = queue.active || 0;
+
   return (
     <div className="app-shell">
       <div className="noise-overlay" />
@@ -55,18 +66,18 @@ const Metrics = () => {
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="mb-8"
         >
-          <p className="section-kicker">Realtime Monitoring</p>
+          <p className="section-kicker">Performance Overview</p>
           <div className="mt-4 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <h1 className="font-display text-5xl leading-none tracking-[0.05em] text-white sm:text-6xl">
                 Metrics
               </h1>
               <p className="mt-4 max-w-2xl text-base leading-7 text-zinc-400">
-                Queue health and execution performance, reduced to a clearer grayscale dashboard with continuous updates.
+                Simple health summary for your automations in the last 24 hours.
               </p>
             </div>
             <div className="glass-panel px-5 py-4 text-xs uppercase tracking-[0.3em] text-zinc-400">
-              Auto-refresh every 30 seconds
+              Auto-refresh 30s
             </div>
           </div>
         </motion.section>
@@ -77,18 +88,32 @@ const Metrics = () => {
           transition={{ duration: 0.45, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
           className="mb-8"
         >
-          <div className="mb-4 flex items-center gap-3">
-            <Radar className="h-5 w-5 text-zinc-300" />
-            <h2 className="text-lg font-semibold uppercase tracking-[0.26em] text-zinc-300">Queue Status</h2>
+          <div className="mb-5 flex items-center gap-3">
+            <Activity className="h-5 w-5 text-zinc-300" />
+            <h2 className="text-lg font-semibold uppercase tracking-[0.22em] text-zinc-300">What matters now</h2>
           </div>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5">
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
             {[
-              { label: 'Waiting', value: metrics?.queue?.waiting || 0, icon: Clock3 },
-              { label: 'Active', value: metrics?.queue?.active || 0, icon: Activity },
-              { label: 'Completed', value: metrics?.queue?.completed || 0, icon: CheckCircle2 },
-              { label: 'Failed', value: metrics?.queue?.failed || 0, icon: XCircle },
-              { label: 'Delayed', value: metrics?.queue?.delayed || 0, icon: TrendingUp },
-            ].map(({ label, value, icon: Icon }, index) => (
+              {
+                label: 'Total runs (24h)',
+                value: totalRuns,
+                helper: 'All automation executions recorded in the last 24 hours.',
+                icon: Activity,
+              },
+              {
+                label: 'Success rate',
+                value: successRate,
+                helper: `${successfulRuns} successful and ${failedRuns} failed runs.`,
+                icon: CheckCircle2,
+              },
+              {
+                label: 'Average run time',
+                value: `${avgExecutionTime} ms`,
+                helper: 'Average execution duration for successful runs.',
+                icon: TimerReset,
+              },
+            ].map(({ label, value, helper, icon: Icon }, index) => (
               <motion.div
                 key={label}
                 initial={{ opacity: 0, y: 18 }}
@@ -100,6 +125,7 @@ const Metrics = () => {
                     <div>
                       <p className="section-kicker">{label}</p>
                       <p className="mt-3 font-display text-4xl text-white">{value}</p>
+                      <p className="mt-2 text-sm text-zinc-500">{helper}</p>
                     </div>
                     <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/6">
                       <Icon className="h-5 w-5 text-zinc-200" />
@@ -117,23 +143,25 @@ const Metrics = () => {
           transition={{ duration: 0.45, delay: 0.14, ease: [0.22, 1, 0.36, 1] }}
         >
           <div className="mb-4 flex items-center gap-3">
-            <TimerReset className="h-5 w-5 text-zinc-300" />
+            <Clock3 className="h-5 w-5 text-zinc-300" />
             <h2 className="text-lg font-semibold uppercase tracking-[0.26em] text-zinc-300">
-              Execution Statistics
+              Queue snapshot
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-2">
             {[
-              { label: 'Total Executions', value: metrics?.executions?.total || 0, suffix: '' },
-              { label: 'Successful', value: metrics?.executions?.success || 0, suffix: metrics?.executions?.successRate || '' },
-              { label: 'Failed', value: metrics?.executions?.failed || 0, suffix: '' },
               {
-                label: 'Avg Execution Time',
-                value: Math.round(metrics?.executions?.avgExecutionTime || 0),
-                suffix: 'ms',
+                label: 'Pending tasks',
+                value: pendingTasks,
+                helper: 'Jobs waiting or delayed in queue.',
               },
-            ].map(({ label, value, suffix }, index) => (
+              {
+                label: 'Running now',
+                value: runningTasks,
+                helper: 'Jobs currently being processed.',
+              },
+            ].map(({ label, value, helper }, index) => (
               <motion.div
                 key={label}
                 initial={{ opacity: 0, y: 18 }}
@@ -143,39 +171,12 @@ const Metrics = () => {
                 <Card>
                   <CardContent className="p-0">
                     <p className="section-kicker">{label}</p>
-                    <p className="mt-4 font-display text-5xl text-white">
-                      {value}
-                      {suffix === 'ms' ? <span className="ml-1 text-2xl text-zinc-500">ms</span> : null}
-                    </p>
-                    {suffix && suffix !== 'ms' ? (
-                      <p className="mt-3 text-sm text-zinc-500">{suffix}</p>
-                    ) : null}
+                    <p className="mt-4 font-display text-5xl text-white">{value}</p>
+                    <p className="mt-3 text-sm text-zinc-500">{helper}</p>
                   </CardContent>
                 </Card>
               </motion.div>
             ))}
-          </div>
-
-          <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-            <Card>
-              <CardContent className="p-0">
-                <p className="section-kicker">Fastest Execution</p>
-                <p className="mt-4 font-display text-4xl text-white">
-                  {metrics?.executions?.minExecutionTime || 0}
-                  <span className="ml-1 text-xl text-zinc-500">ms</span>
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-0">
-                <p className="section-kicker">Slowest Execution</p>
-                <p className="mt-4 font-display text-4xl text-white">
-                  {metrics?.executions?.maxExecutionTime || 0}
-                  <span className="ml-1 text-xl text-zinc-500">ms</span>
-                </p>
-              </CardContent>
-            </Card>
           </div>
         </motion.section>
       </main>

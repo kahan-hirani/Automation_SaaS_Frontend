@@ -74,7 +74,7 @@ const Logs = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
-  const [typeFilter, setTypeFilter] = useState('all');
+  const [typeFilter, setTypeFilter] = useState('WEBSITE_UPTIME');
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
   const [pageInput, setPageInput] = useState('1');
@@ -116,9 +116,7 @@ const Logs = () => {
 
   const filteredLogs = logsWithHealth.filter((log) => {
     const healthOk = filter === HEALTH_FILTERS.ALL || log.healthLevel === filter;
-    const typeOk =
-      typeFilter === 'all' ||
-      (log.Automation?.automationType || 'WEBSITE_UPTIME') === typeFilter;
+    const typeOk = (log.Automation?.automationType || 'WEBSITE_UPTIME') === typeFilter;
     return healthOk && typeOk;
   });
 
@@ -309,7 +307,6 @@ const Logs = () => {
           {/* Type filter */}
           <div className="mb-6 flex flex-wrap gap-2">
             {[
-              { key: 'all',            label: 'All Types', Icon: null },
               { key: 'WEBSITE_UPTIME', label: 'Uptime',    Icon: Globe },
               { key: 'PRICE_MONITOR',  label: 'Price',     Icon: DollarSign },
               { key: 'JOB_MONITOR',    label: 'Jobs',      Icon: Briefcase },

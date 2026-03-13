@@ -55,12 +55,12 @@ const Features = () => {
       <div className="noise-overlay" />
       <Navbar />
 
-      <main className="page-frame">
+      <main className="page-frame space-y-12 lg:space-y-14">
         <motion.section
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="relative overflow-hidden rounded-[36px] border border-white/10 bg-black px-6 py-8 shadow-[0_40px_120px_rgba(0,0,0,0.5)] sm:px-8 lg:px-10"
+          className="relative overflow-hidden rounded-[36px] border border-white/10 bg-black px-6 py-9 shadow-[0_40px_120px_rgba(0,0,0,0.5)] sm:px-8 sm:py-10 lg:px-10 lg:py-12"
         >
           <div className="pointer-events-none absolute inset-y-0 right-0 w-1/2 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.14),transparent_48%)] opacity-80 blur-2xl" />
           <div className="relative">
@@ -68,10 +68,10 @@ const Features = () => {
             <h1 className="mt-4 max-w-4xl font-display text-5xl leading-[0.94] tracking-[0.05em] text-white sm:text-6xl">
               Features and Automation Types
             </h1>
-            <p className="mt-6 max-w-2xl text-base leading-7 text-zinc-400">
+            <p className="mt-7 max-w-2xl text-base leading-7 text-zinc-400">
               This workspace supports multiple automation engines with a unified dashboard, logs, metrics, and notifications.
             </p>
-            <div className="mt-8 flex flex-wrap gap-2">
+            <div className="mt-9 flex flex-wrap gap-2.5">
               <Badge variant="outline">3 automation types</Badge>
               <Badge variant="outline">Health-aware alerts</Badge>
               <Badge variant="outline">Modular worker routing</Badge>
@@ -83,13 +83,16 @@ const Features = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-8"
+          className="rounded-[30px] border border-white/8 bg-white/[0.02] p-6 sm:p-8"
         >
-          <div className="mb-4 flex items-center gap-2">
+          <div className="mb-8 flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-zinc-300" />
             <h2 className="text-lg font-semibold uppercase tracking-[0.26em] text-zinc-300">Automation Types</h2>
           </div>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <p className="mb-8 max-w-3xl text-sm leading-7 text-zinc-400">
+            Each automation type has focused configuration and outcome fields, so logs remain readable and purpose-specific.
+          </p>
+          <div className="grid grid-cols-1 gap-7 md:grid-cols-2 xl:grid-cols-3">
             {automations.map(({ key, title, icon: Icon, description, config, outcomes }, index) => (
               <motion.div
                 key={key}
@@ -97,29 +100,29 @@ const Features = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.1 + index * 0.06, ease: [0.22, 1, 0.36, 1] }}
               >
-                <Card className="h-full">
-                  <CardHeader>
+                <Card className="h-full p-6 sm:p-7">
+                  <CardHeader className="gap-3">
                     <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-2xl border border-white/12 bg-white/6">
                       <Icon className="h-5 w-5 text-zinc-200" />
                     </div>
-                    <CardTitle>{title}</CardTitle>
-                    <CardDescription>{description}</CardDescription>
+                    <CardTitle className="text-[2.15rem] leading-[1.02] tracking-[0.03em]">{title}</CardTitle>
+                    <CardDescription className="text-base leading-8 text-zinc-400">{description}</CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-4">
+                  <CardContent className="mt-6 space-y-6">
                     <div>
-                      <p className="section-kicker mb-2">Required Config</p>
-                      <div className="flex flex-wrap gap-2">
+                      <p className="section-kicker mb-3">Required Config</p>
+                      <div className="flex flex-wrap gap-2.5">
                         {config.map((item) => (
                           <Badge key={item} variant="muted">{item}</Badge>
                         ))}
                       </div>
                     </div>
                     <div>
-                      <p className="section-kicker mb-2">Outputs</p>
-                      <ul className="space-y-2 text-sm text-zinc-400">
+                      <p className="section-kicker mb-3">Outputs</p>
+                      <ul className="space-y-3 text-[1.02rem] leading-7 text-zinc-400">
                         {outcomes.map((item) => (
-                          <li key={item} className="flex items-start gap-2">
-                            <ArrowRight className="mt-1 h-3.5 w-3.5 flex-shrink-0 text-zinc-500" />
+                          <li key={item} className="flex items-start gap-2.5">
+                            <ArrowRight className="mt-1.5 h-3.5 w-3.5 flex-shrink-0 text-zinc-500" />
                             <span>{item}</span>
                           </li>
                         ))}
@@ -136,13 +139,13 @@ const Features = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-8"
+          className="rounded-[30px] border border-white/8 bg-white/[0.02] p-6 sm:p-8"
         >
-          <div className="mb-4 flex items-center gap-2">
+          <div className="mb-8 flex items-center gap-2">
             <BarChart3 className="h-5 w-5 text-zinc-300" />
             <h2 className="text-lg font-semibold uppercase tracking-[0.26em] text-zinc-300">Core Platform Features</h2>
           </div>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
             {platformFeatures.map(({ title, icon: Icon, detail }, index) => (
               <motion.div
                 key={title}
@@ -150,13 +153,13 @@ const Features = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, delay: 0.16 + index * 0.05, ease: [0.22, 1, 0.36, 1] }}
               >
-                <Card>
-                  <CardContent className="p-0">
-                    <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl border border-white/12 bg-white/6">
+                <Card className="h-full p-6">
+                  <CardContent className="flex h-full flex-col gap-4">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/12 bg-white/6">
                       <Icon className="h-4 w-4 text-zinc-200" />
                     </div>
                     <p className="text-sm font-semibold uppercase tracking-[0.18em] text-zinc-300">{title}</p>
-                    <p className="mt-3 text-sm leading-6 text-zinc-500">{detail}</p>
+                    <p className="text-sm leading-7 text-zinc-500">{detail}</p>
                   </CardContent>
                 </Card>
               </motion.div>

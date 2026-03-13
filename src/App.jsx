@@ -7,6 +7,7 @@ import Logs from './pages/Logs';
 import Metrics from './pages/Metrics';
 import Features from './pages/Features';
 import Profile from './pages/Profile';
+import AutomationDetail from './pages/AutomationDetail';
 import { Loader } from 'lucide-react';
 
 const ProtectedRoute = ({ children }) => {
@@ -104,6 +105,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/automations/:id"
+            element={
+              <ProtectedRoute>
+                <AutomationDetail />
               </ProtectedRoute>
             }
           />

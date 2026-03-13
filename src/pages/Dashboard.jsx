@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import AutomationCard from '../components/AutomationCard';
 import CreateAutomationModal from '../components/CreateAutomationModal';
@@ -26,6 +27,7 @@ const STATUS_FILTERS = [
 ];
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [automations, setAutomations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -308,6 +310,7 @@ const Dashboard = () => {
                   automation={automation}
                   onDelete={handleDelete}
                   onToggle={handleToggle}
+                  onOpen={(selected) => navigate(`/automations/${selected.id}`)}
                 />
               ))}
             </div>

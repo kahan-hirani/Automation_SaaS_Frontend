@@ -66,7 +66,15 @@ const NAME_PLACEHOLDERS = {
   JOB_MONITOR: 'e.g. Watch Frontend Jobs Page',
 };
 
-const CreateAutomationModal = ({ onClose, onCreate, onCreateFailed }) => {
+const CreateAutomationModal = ({
+  onClose,
+  onCreate,
+  onCreateFailed,
+  mode = 'create',
+  initialAutomation = null,
+  onUpdated,
+  onUpdateFailed,
+}) => {
   const [name, setName] = useState('');
   const [schedule, setSchedule] = useState('*/5 * * * *');
   const [automationType, setAutomationType] = useState(AUTOMATION_TYPES[0].value);
@@ -81,6 +89,16 @@ const CreateAutomationModal = ({ onClose, onCreate, onCreateFailed }) => {
 
   const selectedType = AUTOMATION_TYPES.find((t) => t.value === automationType);
   const namePlaceholder = NAME_PLACEHOLDERS[automationType] || 'e.g. Create Automation';
+  const isEditMode = mode === 'edit';
+
+  useEffect(() => {
+    if (!isEditMode || !initialAutomation) return;
+
+    setName(initialAutomation.name || '');
+    setSchedule(initialAutomation.schedule || '*/5 * * * *');
+    setAutomationType(initialAutomation.automationType || AUTOMATION_TYPES[0].value);
+    setConfig(initialAutomation.config || {});
+  }, [isEditMode, initialAutomation]);
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -123,11 +141,24 @@ const CreateAutomationModal = ({ onClose, onCreate, onCreateFailed }) => {
     setLoading(true);
 
     try {
-      await automationAPI.create({ name, schedule, automationType, config });
-      onCreate();
+      if (isEditMode && initialAutomation?.id) {
+        await automationAPI.update(initialAutomation.id, { name, schedule, automationType, config });
+        onUpdated?.();
+      } else {
+        await automationAPI.create({ name, schedule, automationType, config });
+        onCreate?.();
+      }
     } catch (err) {
-      setError(err.response?.data?.errMessage || 'Failed to create automation');
-      onCreateFailed?.();
+      setError(
+        err.response?.data?.errMessage ||
+        (isEditMode ? 'Failed to update automation' : 'Failed to create automation')
+      );
+
+      if (isEditMode) {
+        onUpdateFailed?.();
+      } else {
+        onCreateFailed?.();
+      }
     } finally {
       setLoading(false);
     }
@@ -150,9 +181,13 @@ const CreateAutomationModal = ({ onClose, onCreate, onCreateFailed }) => {
               <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-2xl border border-white/12 bg-white text-black shadow-[0_12px_32px_rgba(255,255,255,0.12)]">
                 {selectedType ? <selectedType.icon className="h-5 w-5" /> : null}
               </div>
-              <DialogTitle className="text-[1.4rem] tracking-[0.04em] sm:text-[1.55rem]">Create New Automation</DialogTitle>
+              <DialogTitle className="text-[1.4rem] tracking-[0.04em] sm:text-[1.55rem]">
+                {isEditMode ? 'Edit Automation' : 'Create New Automation'}
+              </DialogTitle>
               <DialogDescription className="max-w-2xl text-sm leading-6 text-zinc-300">
-                Choose a type, configure the target, and schedule your new workflow.
+                {isEditMode
+                  ? 'Update the configuration and schedule for this workflow.'
+                  : 'Choose a type, configure the target, and schedule your new workflow.'}
               </DialogDescription>
             </DialogHeader>
           </div>
@@ -354,7 +389,7 @@ const CreateAutomationModal = ({ onClose, onCreate, onCreateFailed }) => {
                 Cancel
               </Button>
               <Button type="submit" size="sm" form="create-automation-form" disabled={loading} className="h-9 px-5">
-                {loading ? 'Creating…' : 'Create Automation'}
+                {loading ? (isEditMode ? 'Saving…' : 'Creating…') : (isEditMode ? 'Save Changes' : 'Create Automation')}
               </Button>
             </div>
           </div>
