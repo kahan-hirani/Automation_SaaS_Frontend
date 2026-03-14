@@ -1,297 +1,288 @@
-# Automation SaaS Client
+# 🤖 Automation SaaS
 
-Production-oriented frontend for the Automation SaaS platform.
+> **Live Demo:** [https://automation-saas-one.vercel.app/](https://automation-saas-one.vercel.app/)
 
-This application provides:
-- Authentication (register, login, profile)
-- Automation management (create, edit, activate/pause, delete)
-- Automation detail pages with per-automation logs
-- Global logs with type-specific filters (uptime, price, jobs)
-- User-friendly metrics dashboard
-- Product/features presentation pages
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)](https://react.dev)
+[![Vite](https://img.shields.io/badge/Vite-7-646CFF?logo=vite)](https://vitejs.dev)
+[![TailwindCSS](https://img.shields.io/badge/Tailwind-CSS-38BDF8?logo=tailwindcss)](https://tailwindcss.com)
+[![Deployed on Vercel](https://img.shields.io/badge/Deployed-Vercel-black?logo=vercel)](https://automation-saas-one.vercel.app/)
 
-The client is built with React + Vite and communicates with the backend API at `http://localhost:3000/api/v1` by default.
+---
 
-## Table of contents
+## What is Automation SaaS?
 
-1. Overview
-2. Tech stack
-3. Project structure
-4. Routing and page responsibilities
-5. Frontend architecture and data flow
-6. API integration contract
-7. Local development setup
-8. Build and deployment
-9. Testing and quality workflow (A to Z)
-10. Troubleshooting
-11. Security and production notes
+**Automation SaaS** is a full-stack, production-deployed web platform that lets users create and schedule intelligent automation tasks — without writing a single line of code. Think of it as your personal automation engine that runs on a schedule and keeps you informed via email.
 
-## 1) Overview
+Users can monitor websites, track prices, and watch job boards — all from one sleek dashboard.
 
-The client is a protected dashboard-style SPA where users can:
-- Sign up and sign in
-- Create automations of 3 types:
-	- `WEBSITE_UPTIME`
-	- `PRICE_MONITOR`
-	- `JOB_MONITOR`
-- View automation cards and open each automation detail page
-- Edit automation configuration and schedule
-- Review logs globally and per automation
-- See simplified performance metrics
+---
 
-## 2) Tech stack
+## ✨ Features
 
-- React 19
-- Vite 7
-- React Router 7
-- Axios
-- Tailwind CSS + PostCSS
-- Framer Motion (UI transitions)
-- Lucide React icons
-- Radix UI primitives (dialogs)
+| Feature                     | Description                                                                                                  |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| 🔐 **Authentication**       | Secure register/login with JWT. Protected routes for authenticated users only.                               |
+| 📋 **Automation Dashboard** | View all automations in a beautiful card layout with status badges and controls.                             |
+| ➕ **Create Automations**   | Create 3 types of automations with a guided modal — URL, schedule, config.                                   |
+| ✏️ **Edit & Manage**        | Edit name, schedule, and config. Toggle active/inactive or delete automations.                               |
+| 📊 **Live Metrics**         | Real-time execution metrics — success rate, average run time, queue status. Auto-refreshes every 30 seconds. |
+| 📜 **Execution Logs**       | View all automation execution history. Filter by type (Uptime / Price / Jobs).                               |
+| 👤 **Profile Management**   | Update account details and manage your session.                                                              |
+| 📬 **Email Alerts**         | Get notified by email on price drops, site outages, and new job listings.                                    |
 
-## 3) Project structure
+---
 
-```text
-client/
-	public/
-	src/
-		components/
-			ui/
-			AutomationCard.jsx
-			CreateAutomationModal.jsx
-			ConfirmActionModal.jsx
-			Navbar.jsx
-			Footer.jsx
-			ToastStack.jsx
-		context/
-			AuthContext.jsx
-		lib/
-			utils.js
-		pages/
-			Dashboard.jsx
-			AutomationDetail.jsx
-			Logs.jsx
-			Metrics.jsx
-			Features.jsx
-			Login.jsx
-			Register.jsx
-			Profile.jsx
-		services/
-			api.js
-		App.jsx
-		main.jsx
+## 🎯 Use Cases
+
+### 1. 🌐 Website Uptime Monitoring
+
+Never be the last to know your site is down.
+
+- Configure a URL and a schedule (e.g., every 5 minutes)
+- The system visits the site via a headless browser (Puppeteer)
+- Measures HTTP status, response time, and page content
+- Classifies health as **Healthy**, **Degraded**, or **Unhealthy**
+- Sends an email alert with full diagnostics
+
+**Who uses it:** Developers, freelancers, small business owners monitoring client sites.
+
+---
+
+### 2. 💰 Price Monitor
+
+Get notified the moment a product hits your target price.
+
+- Provide a product page URL + CSS selector that points to the price element
+- Set your target price threshold
+- The system scrapes the price on your schedule (e.g., every 30 minutes)
+- Sends a **Price Drop Alert** email when the current price ≤ your target
+- Also notifies you if the price changes significantly above your target
+
+**Who uses it:** Shoppers, deal hunters, e-commerce analysts.
+
+---
+
+### 3. 📰 Job Monitor
+
+Never miss a new job posting on your target careers page.
+
+- Provide a careers page URL + CSS selector for job listing elements
+- Optionally filter by keyword (e.g., "React", "Remote")
+- The system tracks listing count and titles across runs
+- Sends an alert listing all **new job titles** when new postings appear
+
+**Who uses it:** Job seekers, recruiters, talent acquisition teams.
+
+---
+
+## 🏗️ Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      Frontend (Vercel)                      │
+│  React 19 + Vite + TailwindCSS + Framer Motion             │
+│  https://automation-saas-one.vercel.app                     │
+└───────────────────────┬─────────────────────────────────────┘
+                        │ HTTPS + JWT (Authorization header)
+                        ▼
+┌─────────────────────────────────────────────────────────────┐
+│                   Backend API (Render)                      │
+│  Express 5 + Sequelize ORM + Node-cron + BullMQ            │
+│  Docker-based deployment on Render Web Service             │
+└──────────┬───────────────────────────┬──────────────────────┘
+           │                           │
+           ▼                           ▼
+┌──────────────────┐       ┌──────────────────────┐
+│  Supabase        │       │  Upstash Redis       │
+│  PostgreSQL      │       │  (BullMQ Queue +     │
+│  (Users,         │       │   Caching layer)     │
+│  Automations,    │       └──────────────────────┘
+│  Logs)           │                  │
+└──────────────────┘                  ▼
+                          ┌──────────────────────┐
+                          │  BullMQ Worker       │
+                          │  (Runs inside API    │
+                          │   or as separate     │
+                          │   Background Worker) │
+                          │                      │
+                          │  Handlers:           │
+                          │  - Puppeteer Uptime  │
+                          │  - Price Scraper     │
+                          │  - Job Board Scraper │
+                          └──────────────────────┘
+                                     │
+                                     ▼
+                          ┌──────────────────────┐
+                          │  Nodemailer (Gmail)  │
+                          │  Email Notifications │
+                          └──────────────────────┘
 ```
 
-## 4) Routing and page responsibilities
+---
 
-Routes are declared in `src/App.jsx`.
+## 🧩 Frontend Tech Stack
 
-- Public routes:
-	- `/login`
-	- `/register`
-- Protected routes:
-	- `/` dashboard
-	- `/automations/:id` automation detail + edit + scoped logs
-	- `/logs` global logs
-	- `/metrics` simplified metrics
-	- `/features` product and capability summary
-	- `/profile` account details
+| Technology         | Purpose                                         |
+| ------------------ | ----------------------------------------------- |
+| **React 19**       | UI component framework                          |
+| **Vite 7**         | Ultra-fast dev server and bundler               |
+| **React Router 7** | Client-side routing with protected route guards |
+| **Axios**          | HTTP client for API calls with interceptors     |
+| **Tailwind CSS**   | Utility-first responsive styling                |
+| **Framer Motion**  | Smooth page transitions and micro-animations    |
+| **Lucide React**   | Modern, consistent icon set                     |
+| **Radix UI**       | Accessible modal/dialog primitives              |
 
-Route guards:
-- `ProtectedRoute`: redirects unauthenticated users to `/login`
-- `PublicRoute`: redirects authenticated users to `/`
+---
 
-## 5) Frontend architecture and data flow
+## 📁 Project Structure
 
-### Authentication flow
+```
+client/
+├── public/
+└── src/
+    ├── components/
+    │   ├── ui/                    # Radix-based UI primitives
+    │   ├── AutomationCard.jsx     # Card for each automation on dashboard
+    │   ├── CreateAutomationModal.jsx  # Create & Edit form modal
+    │   ├── ConfirmActionModal.jsx # Delete/action confirmation dialog
+    │   ├── Navbar.jsx             # Top navigation bar
+    │   ├── Footer.jsx             # Page footer
+    │   └── ToastStack.jsx         # Notification toast system
+    ├── context/
+    │   └── AuthContext.jsx        # Global auth state (JWT, user, login/logout)
+    ├── lib/
+    │   └── utils.js               # Shared utility functions
+    ├── pages/
+    │   ├── Dashboard.jsx          # Main automation grid view
+    │   ├── AutomationDetail.jsx   # Detail view + scoped logs + edit
+    │   ├── Logs.jsx               # Global logs with type filters
+    │   ├── Metrics.jsx            # Execution metrics dashboard
+    │   ├── Features.jsx           # Product features landing section
+    │   ├── Login.jsx              # Login page
+    │   ├── Register.jsx           # Registration page
+    │   └── Profile.jsx            # Account management
+    ├── services/
+    │   └── api.js                 # Axios instance with base URL + auth header
+    ├── App.jsx                    # Route declarations + route guards
+    └── main.jsx                   # App entry point
+```
 
-`AuthContext` in `src/context/AuthContext.jsx` manages:
-- `user`
-- `loading`
-- `token` (from `localStorage`)
-- `login`, `register`, `logout`, `refreshProfile`
+---
 
-On app load:
-1. Token is read from `localStorage`
-2. Profile is fetched using `/auth/users/profile`
-3. If token is invalid, user is logged out
+## 🔒 Authentication Flow
 
-### API flow
+```
+User opens app
+    │
+    ├─ Token in localStorage?
+    │       │
+    │       ├─ Yes → GET /auth/users/profile
+    │       │           │
+    │       │           ├─ Success → Set user in AuthContext → App loads
+    │       │           └─ Fail    → Clear token → Redirect to /login
+    │       │
+    │       └─ No  → Redirect to /login
+    │
+User logs in → Token saved to localStorage → Profile fetched → Dashboard loads
+```
 
-`src/services/api.js` creates a shared Axios instance:
-- Base URL: `http://localhost:3000/api/v1`
-- `Authorization: Bearer <token>` header added automatically when token exists
+---
 
-### UI interaction flow examples
+## ⚙️ Environment Variables
 
-Dashboard card click:
-1. User clicks an automation card on dashboard
-2. App navigates to `/automations/:id`
-3. Detail page loads automation + logs for that specific automation
-4. User can edit via modal (same modal component used for create/edit)
+Create a `.env` file at the root of the `client/` directory:
 
-Logs filtering:
-1. User opens global logs page
-2. User selects one type (`Uptime`, `Price`, `Jobs`)
-3. Table updates with fields specific to that type
+```env
+VITE_API_URL=https://your-render-api-url.onrender.com/api/v1
+```
 
-Metrics page:
-1. Metrics fetched from `/metrics`
-2. Client displays only user-focused values:
-	 - total runs
-	 - success rate
-	 - average run time
-	 - pending tasks
-	 - running now
-3. Auto refresh every 30s
+For local development this defaults to `http://localhost:3000/api/v1` if not set.
 
-## 6) API integration contract
+**On Vercel:** Add `VITE_API_URL` in your project's **Settings → Environment Variables** and trigger a redeployment.
 
-Client currently consumes these endpoint groups:
+---
 
-- Auth:
-	- `POST /auth/users/register`
-	- `POST /auth/users/login`
-	- `GET /auth/users/profile`
-	- `PUT /auth/users/profile`
-	- `DELETE /auth/users/profile`
-- Automations:
-	- `GET /automations`
-	- `GET /automations/:id`
-	- `POST /automations/create-automation`
-	- `PUT /automations/:id`
-	- `PATCH /automations/:id/toggle`
-	- `DELETE /automations/:id`
-- Logs:
-	- `GET /logs?limit=...`
-	- `GET /logs/:automationId?limit=...`
-	- `GET /logs/stats`
-- Metrics:
-	- `GET /metrics`
+## 🚀 Local Development Setup
 
-## 7) Local development setup
+### Prerequisites
 
-Prerequisites:
 - Node.js 20+
-- Backend server running at `http://localhost:3000`
+- Backend server running (see [backend README](../server/README.md))
 
-Install dependencies:
+### Steps
 
 ```bash
 cd client
 npm install
 ```
 
-Start development server:
+Create environment file:
+
+```bash
+cp .env.example .env
+# Edit VITE_API_URL to point to your running backend
+```
+
+Start the development server:
 
 ```bash
 npm run dev
 ```
 
-Default local URL:
-- `http://localhost:5173`
+App runs at: [http://localhost:5173](http://localhost:5173)
 
-## 8) Build and deployment
+---
 
-Build production bundle:
+## 📦 Build & Deployment
+
+### Build for production
 
 ```bash
-cd client
 npm run build
 ```
 
-Preview production build locally:
+### Preview the production build locally
 
 ```bash
 npm run preview
 ```
 
-Important deployment note:
-- API base URL is currently hardcoded in `src/services/api.js`.
-- For production, move this to environment-based configuration (for example via Vite env variables).
+### Deploy to Vercel
 
-## 9) Testing and quality workflow (A to Z)
+1. Push to GitHub (or connect Vercel to your repo)
+2. In the Vercel dashboard, set the **Root Directory** to `client`
+3. Add environment variable `VITE_API_URL` pointing to your Render backend
+4. Vercel auto-deploys on every push to `main`
 
-This client currently has no unit test framework wired yet, so production readiness uses a layered approach:
+The `vercel.json` is already configured to handle SPA routing (all routes redirect to `index.html`).
 
-### A. Static quality checks
+---
 
-Lint:
-
-```bash
-cd client
-npm run lint
-```
-
-### B. Compile-time safety
-
-Build verification:
+## 📋 Scripts Reference
 
 ```bash
-cd client
-npm run build
+npm run dev      # Start Vite dev server (hot reload)
+npm run build    # Build production bundle to ./dist
+npm run preview  # Locally preview the production build
+npm run lint     # Run ESLint across source files
 ```
 
-### C. End-to-end manual functional checks
+---
 
-Recommended checklist before release:
+## 🔐 Security Notes
 
-1. Auth
-	 - Register new user
-	 - Login/logout
-	 - Protected route redirect
-2. Automation CRUD
-	 - Create each automation type
-	 - Edit automation from detail page
-	 - Toggle active/inactive
-	 - Delete automation
-3. Logs
-	 - Global logs page renders
-	 - Type filters (`Uptime`, `Price`, `Jobs`) work
-	 - Detail page shows only selected automation logs
-4. Metrics
-	 - User-friendly cards render
-	 - Auto-refresh updates values
-5. Responsive UI
-	 - Dashboard, detail, logs, metrics, features on mobile + desktop
+- JWTs are stored in `localStorage` and attached as `Authorization: Bearer <token>` headers
+- All API routes requiring authentication are protected by the backend middleware
+- CORS is configured on the backend to allow only the Vercel frontend domain in production
+- Never commit your `.env` file — it's in `.gitignore`
 
-### D. Suggested future hardening
+---
 
-For full CI-grade frontend testing, add:
-- Unit tests with Vitest + React Testing Library
-- E2E tests with Playwright/Cypress
-- Accessibility checks (axe)
+## 🌐 Live Application
 
-## 10) Troubleshooting
+**→ [https://automation-saas-one.vercel.app/](https://automation-saas-one.vercel.app/)**
 
-### Blank or failed data loads
-- Verify backend is running on port `3000`
-- Check browser network tab for `401/500` errors
-- Confirm token exists in `localStorage`
+---
 
-### CORS errors
-- Ensure backend CORS allowlist includes frontend origin (`5173/5174`)
-
-### Build succeeds but API fails in production
-- Confirm API URL is environment-configured for deployed backend
-
-### Login loop or unexpected redirect to login
-- Token may be expired or invalid; logout and login again
-
-## 11) Security and production notes
-
-- Never commit secrets/tokens
-- Use HTTPS in production
-- Use secure cookie/token handling policy aligned with backend auth strategy
-- Keep dependency versions updated
-- Run lint + build as required CI gates before release
-
-## Scripts quick reference
-
-```bash
-npm run dev      # Start Vite dev server
-npm run build    # Build production bundle
-npm run preview  # Preview built app
-npm run lint     # Lint source code
-```
+_Built with ❤️ using React, Vite, and TailwindCSS. Powered by a Node.js + PostgreSQL + Redis backend._
