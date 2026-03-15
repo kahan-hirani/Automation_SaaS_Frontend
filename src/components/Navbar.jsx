@@ -1,7 +1,8 @@
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { motion } from 'framer-motion';
-import { LogOut, Bot, BarChart3, ScrollText, BookOpen, Settings } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { LogOut, Bot, BarChart3, ScrollText, BookOpen, Settings, Menu, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { cn } from '../lib/utils';
 
@@ -16,8 +17,26 @@ const navItems = [
 const Navbar = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return undefined;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [mobileMenuOpen]);
 
   const handleLogout = () => {
+    setMobileMenuOpen(false);
     logout();
     navigate('/login');
   };
@@ -73,7 +92,18 @@ const Navbar = () => {
           ))}
         </nav>
 
-        <div className="flex flex-1 justify-end">
+        <div className="flex flex-1 items-center justify-end gap-2">
+          <Button
+            type="button"
+            variant="secondary"
+            size="icon"
+            onClick={() => setMobileMenuOpen((current) => !current)}
+            aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={mobileMenuOpen}
+            className="h-9 w-9 lg:hidden"
+          >
+            {mobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </Button>
           <Button
             onClick={handleLogout}
             variant="secondary"
@@ -86,47 +116,52 @@ const Navbar = () => {
         </div>
       </div>
 
-      <div className="mx-auto flex max-w-7xl px-4 pb-2 lg:hidden sm:px-6 lg:px-8">
-        <nav className="glass-panel flex w-full flex-wrap items-center gap-2 px-2 py-2">
-          {navItems.map(({ to, label, icon: Icon, end }) => (
-              <NavLink
-                key={to}
-                to={to}
-                end={end}
-                className={({ isActive }) =>
-                  cn(
-                    'group relative inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-zinc-400 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-white/10 hover:text-white hover:shadow-[0_10px_24px_rgba(255,255,255,0.14)] active:translate-y-0 active:scale-[0.96]',
-                    isActive && 'bg-white text-black shadow-[0_10px_24px_rgba(255,255,255,0.14)] hover:bg-white hover:text-black'
-                  )
-                }
-              >
-                {({ isActive }) => (
-                  <>
-                    <span className="relative z-10 flex items-center gap-2">
-                      <Icon
-                        className={cn(
-                          'h-4 w-4 transition-transform duration-200 ease-out group-hover:-translate-y-0.5',
-                          isActive && 'text-black'
-                        )}
-                      />
-                      {label}
-                    </span>
-                  </>
-                )}
-              </NavLink>
-            ))}
-        </nav>
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            className="mx-auto w-full max-w-7xl px-4 pb-3 sm:px-6 lg:hidden"
+          >
+            <nav className="glass-panel flex flex-col gap-1.5 px-2 py-2">
+              {navItems.map(({ to, label, icon: Icon, end }) => (
+                <NavLink
+                  key={to}
+                  to={to}
+                  end={end}
+                  className={({ isActive }) =>
+                    cn(
+                      'group relative inline-flex items-center justify-between gap-2 rounded-2xl px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.24em] text-zinc-400 transition-all duration-200 ease-out hover:bg-white/10 hover:text-white',
+                      isActive && 'bg-white text-black hover:bg-white hover:text-black'
+                    )
+                  }
+                >
+                  {({ isActive }) => (
+                    <>
+                      <span className="relative z-10 flex items-center gap-2">
+                        <Icon className={cn('h-4 w-4', isActive && 'text-black')} />
+                        {label}
+                      </span>
+                    </>
+                  )}
+                </NavLink>
+              ))}
 
-        <Button
-          onClick={handleLogout}
-          variant="secondary"
-          size="sm"
-          className="ml-2 h-9 px-4 justify-center transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.97] lg:hidden"
-        >
-          <LogOut className="h-4 w-4" />
-          Logout
-        </Button>
-      </div>
+              <Button
+                onClick={handleLogout}
+                variant="secondary"
+                size="sm"
+                className="mt-1 h-9 w-full justify-center"
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
+              </Button>
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.header>
   );
 };

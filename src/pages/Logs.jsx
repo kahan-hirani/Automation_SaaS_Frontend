@@ -231,7 +231,7 @@ const Logs = () => {
         >
           <div>
             <p className="section-kicker">Execution History</p>
-            <h1 className="mt-4 font-display text-5xl leading-none tracking-[0.05em] text-white sm:text-6xl">
+            <h1 className="mt-4 font-display text-4xl leading-none tracking-[0.05em] text-white sm:text-6xl">
               Logs
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-zinc-400">
@@ -239,7 +239,7 @@ const Logs = () => {
             </p>
           </div>
 
-          <div className="glass-panel flex items-center gap-3 px-4 py-3 text-xs uppercase tracking-[0.28em] text-zinc-400">
+          <div className="glass-panel inline-flex items-center gap-3 px-4 py-3 text-[10px] uppercase tracking-[0.22em] text-zinc-400 sm:text-xs sm:tracking-[0.28em]">
             <ScrollText className="h-4 w-4" />
             {filteredLogs.length === 0
               ? '0 visible records'
@@ -344,13 +344,13 @@ const Logs = () => {
             <Card className="overflow-hidden p-0">
               <div className="overflow-x-auto">
                 <table className="min-w-full border-collapse">
-                  <thead className="border-b border-white/10 bg-white/[0.03] text-left text-[10px] uppercase tracking-[0.32em] text-zinc-500">
+                  <thead className="border-b border-white/10 bg-white/[0.03] text-left text-[10px] uppercase tracking-[0.22em] text-zinc-500 sm:tracking-[0.32em]">
                     <tr>
-                      <th className="px-6 py-4 font-medium">Automation</th>
-                      <th className="px-6 py-4 font-medium">Status</th>
-                      <th className="px-6 py-4 font-medium">Details</th>
-                      <th className="px-6 py-4 font-medium">Time</th>
-                      <th className="px-6 py-4 font-medium">Date</th>
+                      <th className="px-4 py-4 font-medium sm:px-6">Automation</th>
+                      <th className="px-4 py-4 font-medium sm:px-6">Status</th>
+                      <th className="px-4 py-4 font-medium sm:px-6">Details</th>
+                      <th className="px-4 py-4 font-medium sm:px-6">Time</th>
+                      <th className="px-4 py-4 font-medium sm:px-6">Date</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -359,7 +359,7 @@ const Logs = () => {
                         key={log.id}
                         className="border-b border-white/6 transition hover:bg-white/[0.03]"
                       >
-                        <td className="px-6 py-5 align-top">
+                        <td className="px-4 py-5 align-top sm:px-6">
                           {(() => {
                             const type = log.Automation?.automationType || 'WEBSITE_UPTIME';
                             const { label: typeLabel, Icon: TypeIcon } = TYPE_META[type] || TYPE_META.WEBSITE_UPTIME;
@@ -382,7 +382,7 @@ const Logs = () => {
                             );
                           })()}
                         </td>
-                        <td className="px-6 py-5 align-top">
+                        <td className="px-4 py-5 align-top sm:px-6">
                           <div className="flex flex-wrap items-center gap-2">
                             <Badge variant={getHealthBadgeVariant(log.healthLevel)}>
                               {log.healthLevel}
@@ -392,13 +392,13 @@ const Logs = () => {
                             </Badge>
                           </div>
                         </td>
-                        <td className="px-6 py-5 align-top">
+                        <td className="px-4 py-5 align-top sm:px-6">
                           {renderLogDetails(log)}
                         </td>
-                        <td className="px-6 py-5 align-top text-sm text-zinc-400">
+                        <td className="px-4 py-5 align-top text-sm text-zinc-400 sm:px-6">
                           {log.result?.executionTime}ms
                         </td>
-                        <td className={cn('px-6 py-5 align-top text-sm text-zinc-500')}>
+                        <td className={cn('px-4 py-5 align-top text-sm text-zinc-500 sm:px-6')}>
                           {new Date(log.createdAt).toLocaleString()}
                         </td>
                       </tr>
@@ -498,7 +498,7 @@ const Logs = () => {
                           handlePageJump();
                         }
                       }}
-                      className="h-7 w-14 rounded-full border border-white/12 bg-black px-2 text-center text-xs text-zinc-200 focus:outline-none focus:ring-2 focus:ring-white/50"
+                      className="h-7 w-12 rounded-full border border-white/12 bg-black px-2 text-center text-xs text-zinc-200 focus:outline-none focus:ring-2 focus:ring-white/50 sm:w-14"
                     />
                     <span className="px-1 text-[10px] uppercase tracking-[0.22em] text-zinc-500">/ {totalPages}</span>
                   </div>

@@ -44,16 +44,16 @@ const Register = () => {
   };
 
   return (
-    <div className="app-shell flex min-h-screen flex-col overflow-hidden">
+    <div className="app-shell flex min-h-screen flex-col overflow-x-hidden">
       <div className="noise-overlay" />
 
-      <div className="relative flex flex-1 items-center justify-center overflow-hidden px-4 py-10">
+      <div className="relative flex flex-1 items-center justify-center overflow-hidden px-4 py-8 sm:py-10">
 
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
-        className="pointer-events-none absolute inset-0"
+        className="pointer-events-none absolute inset-0 hidden sm:block"
       >
         <motion.div
           animate={{ x: [0, 28, -14, 0], y: [0, -18, 14, 0] }}
@@ -67,12 +67,12 @@ const Register = () => {
         />
       </motion.div>
 
-      <div className="relative grid w-full max-w-6xl overflow-hidden rounded-[40px] border border-white/10 bg-black/70 shadow-[0_50px_140px_rgba(0,0,0,0.65)] backdrop-blur-2xl lg:grid-cols-[0.95fr_1.05fr]">
+      <div className="relative grid w-full max-w-6xl overflow-hidden rounded-[30px] border border-white/10 bg-black/70 shadow-[0_30px_100px_rgba(0,0,0,0.65)] backdrop-blur-2xl sm:rounded-[40px] lg:grid-cols-[0.95fr_1.05fr]">
         <motion.section
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-          className="flex items-center border-b border-white/10 p-6 sm:p-10 lg:border-b-0 lg:border-r"
+          className="flex items-center border-b border-white/10 p-4 sm:p-10 lg:border-b-0 lg:border-r"
         >
           <Card className="w-full border-white/10 bg-white/[0.03] p-0">
             <CardHeader className="p-8 pb-2">
@@ -170,7 +170,7 @@ const Register = () => {
               <Bot className="h-8 w-8" />
             </div>
             <p className="section-kicker">Build Your Stack</p>
-            <h1 className="mt-4 max-w-lg font-display text-5xl leading-[0.95] tracking-[0.05em] text-white sm:text-6xl">
+            <h1 className="mt-4 max-w-lg font-display text-4xl leading-[0.95] tracking-[0.05em] text-white sm:text-6xl">
               Start with a sharper control room.
             </h1>
             <p className="mt-6 max-w-md text-base leading-7 text-zinc-400">

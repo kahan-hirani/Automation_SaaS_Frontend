@@ -65,7 +65,7 @@ const Features = () => {
           <div className="pointer-events-none absolute inset-y-0 right-0 w-1/2 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.14),transparent_48%)] opacity-80 blur-2xl" />
           <div className="relative">
             <p className="section-kicker">Platform Overview</p>
-            <h1 className="mt-4 max-w-4xl font-display text-5xl leading-[0.94] tracking-[0.05em] text-white sm:text-6xl">
+            <h1 className="mt-4 max-w-4xl font-display text-4xl leading-[0.94] tracking-[0.05em] text-white sm:text-6xl">
               Features and Automation Types
             </h1>
             <p className="mt-7 max-w-2xl text-base leading-7 text-zinc-400">
@@ -105,7 +105,7 @@ const Features = () => {
                     <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-2xl border border-white/12 bg-white/6">
                       <Icon className="h-5 w-5 text-zinc-200" />
                     </div>
-                    <CardTitle className="text-[2.15rem] leading-[1.02] tracking-[0.03em]">{title}</CardTitle>
+                    <CardTitle className="text-[1.75rem] leading-[1.02] tracking-[0.03em] sm:text-[2.15rem]">{title}</CardTitle>
                     <CardDescription className="text-base leading-8 text-zinc-400">{description}</CardDescription>
                   </CardHeader>
                   <CardContent className="mt-6 space-y-6">

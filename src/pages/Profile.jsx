@@ -258,7 +258,7 @@ const Profile = () => {
                   </button>
                 </div>
 
-                <Button type="submit" disabled={savingProfile} className="min-w-[200px]">
+                <Button type="submit" disabled={savingProfile} className="w-full sm:w-auto sm:min-w-[200px]">
                   {savingProfile ? <Loader className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                   Save Profile
                 </Button>
@@ -288,7 +288,7 @@ const Profile = () => {
                   variant="destructive"
                   disabled={deletingAccount || confirmDeleteText !== 'DELETE'}
                   onClick={handleDeleteAccount}
-                  className="min-w-[200px]"
+                  className="w-full sm:w-auto sm:min-w-[200px]"
                 >
                   {deletingAccount ? <Loader className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
                   Delete Account

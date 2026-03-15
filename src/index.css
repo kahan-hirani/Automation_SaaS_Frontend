@@ -108,3 +108,35 @@
     @apply h-px w-full bg-gradient-to-r from-transparent via-white/20 to-transparent;
   }
 }
+
+@media (max-width: 1024px) {
+  body {
+    background-attachment: scroll;
+  }
+
+  .noise-overlay {
+    opacity: 0.1;
+    background-size: 22px 22px;
+  }
+
+  .glass-panel {
+    backdrop-filter: blur(14px);
+  }
+}
+
+@media (max-width: 768px) {
+  .noise-overlay {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -169,7 +169,7 @@ const Dashboard = () => {
           <div className="relative grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
             <div>
               <p className="section-kicker">Automation Studio</p>
-              <h1 className="mt-3 max-w-3xl font-display text-[2.8rem] leading-[0.96] tracking-[0.04em] text-white sm:text-[3.4rem]">
+              <h1 className="mt-3 max-w-3xl font-display text-[2.2rem] leading-[0.96] tracking-[0.04em] text-white sm:text-[3.4rem]">
                 Build a quieter, faster automation command center.
               </h1>
               {/* <p className="mt-4 max-w-2xl text-sm leading-7 text-zinc-400 sm:text-[15px]">
@@ -178,7 +178,7 @@ const Dashboard = () => {
               <div className="mt-6 flex flex-wrap items-center gap-2.5">
                 <Button
                   onClick={() => setShowModal(true)}
-                  className="min-w-[200px]"
+                  className="w-full sm:w-auto sm:min-w-[200px]"
                 >
                   <Plus className="h-4 w-4" />
                   Create Automation

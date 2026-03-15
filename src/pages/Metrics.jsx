@@ -69,7 +69,7 @@ const Metrics = () => {
           <p className="section-kicker">Performance Overview</p>
           <div className="mt-4 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <h1 className="font-display text-5xl leading-none tracking-[0.05em] text-white sm:text-6xl">
+              <h1 className="font-display text-4xl leading-none tracking-[0.05em] text-white sm:text-6xl">
                 Metrics
               </h1>
               <p className="mt-4 max-w-2xl text-base leading-7 text-zinc-400">

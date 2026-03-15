@@ -235,7 +235,7 @@ const AutomationDetail = () => {
                     {typeMeta.label}
                   </span>
                 </div>
-                <CardTitle className="text-3xl text-white">{automation.name}</CardTitle>
+                <CardTitle className="break-words text-2xl text-white sm:text-3xl">{automation.name}</CardTitle>
                 <CardDescription className="mb-4">
                   Configure, monitor, and review all execution logs for this automation.
                 </CardDescription>
@@ -257,7 +257,7 @@ const AutomationDetail = () => {
 
                 <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
                   <p className="section-kicker">Target URL</p>
-                  <p className="mt-2 truncate text-sm text-zinc-300">{automation.config?.url || automation.targetUrl || 'N/A'}</p>
+                  <p className="mt-2 break-all text-sm text-zinc-300">{automation.config?.url || automation.targetUrl || 'N/A'}</p>
                 </div>
 
                 <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">

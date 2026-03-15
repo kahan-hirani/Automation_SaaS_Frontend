@@ -41,7 +41,7 @@ const Footer = () => {
       transition={{ duration: 0.6, delay: 0.3 }}
       className="mt-auto border-t border-white/8 bg-black/60 backdrop-blur-xl"
     >
-      <div className="mx-auto max-w-7xl px-4 pt-14 pb-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 pb-8 pt-12 sm:px-6 sm:pt-14 lg:px-8">
 
         {/* Top row: brand + links */}
         <div className="grid gap-12 lg:grid-cols-[1fr_2fr]">
@@ -63,6 +63,7 @@ const Footer = () => {
               <a
                 href="https://github.com/kahan-hirani"
                 target='_blank'
+                rel="noopener noreferrer"
                 aria-label="GitHub"
                 className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-zinc-500 transition hover:border-white/30 hover:text-white"
               >
@@ -71,6 +72,7 @@ const Footer = () => {
               <a
                 href="https://www.linkedin.com/in/kahan-hirani-7934b92ab/"
                 target='_blank'
+                rel="noopener noreferrer"
                 aria-label="Linkedin"
                 className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-zinc-500 transition hover:border-white/30 hover:text-white"
               >
@@ -79,6 +81,7 @@ const Footer = () => {
               <a
                 href="https://kahan-hirani.github.io/"
                 target='_blank'
+                rel="noopener noreferrer"
                 aria-label="External site"
                 className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-zinc-500 transition hover:border-white/30 hover:text-white"
               >
@@ -129,7 +132,7 @@ const Footer = () => {
           <p className="flex items-center gap-1.5 text-xs text-zinc-600">
             Built with
             <Heart className="h-3 w-3 fill-zinc-600 text-zinc-600" />
-            By <a href="https://github.com/kahan-hirani" target='_blank' className="text-zinc-500 transition hover:text-white">Kahan Hirani</a>
+            By <a href="https://github.com/kahan-hirani" target='_blank' rel="noopener noreferrer" className="text-zinc-500 transition hover:text-white">Kahan Hirani</a>
           </p>
         </div>
       </div>
