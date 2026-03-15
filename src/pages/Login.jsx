@@ -79,7 +79,7 @@ const Login = () => {
             {[
               ['24/7', 'automations live'],
               ['Fast', 'logs and metrics'],
-              ['Pure', 'black and white UI'],
+              ['Secure', 'protected accounts and tokens'],
             ].map(([value, label]) => (
               <div key={label} className="rounded-3xl border border-white/8 bg-white/5 p-4">
                 <p className="font-display text-4xl text-white">{value}</p>

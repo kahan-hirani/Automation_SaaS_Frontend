@@ -174,16 +174,16 @@ const Register = () => {
               Start with a sharper control room.
             </h1>
             <p className="mt-6 max-w-md text-base leading-7 text-zinc-400">
-              New accounts land directly in a redesigned environment built for contrast, clarity, and faster scanning.
+              Launch automations with secure onboarding, live observability, and workflows that keep running in the background.
             </p>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             {[
-              ['Structured', 'shadcn-style components'],
-              ['Animated', 'motion-led page transitions'],
-              ['Responsive', 'mobile and desktop layouts'],
-              ['Monochrome', 'strict grayscale surfaces'],
+              ['Reliable Runs', 'queue-backed jobs that execute on schedule'],
+              ['Live Alerts', 'see failures fast and react immediately'],
+              ['Unified Logs', 'trace every automation from one feed'],
+              ['Actionable Metrics', 'track uptime, throughput, and success rate'],
             ].map(([title, subtitle]) => (
               <div key={title} className="rounded-3xl border border-white/8 bg-white/5 p-5">
                 <p className="text-lg font-semibold text-white">{title}</p>
